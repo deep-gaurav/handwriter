@@ -151,7 +151,7 @@ class Hand(object):
         dwg.save()
 
 def main(argv):
-
+    print('starting')
     style = 0
     outputfile = ''
     inputstring = ''
@@ -179,6 +179,7 @@ def main(argv):
             color = arg
         elif opt in ("-w","--width"):
             width = int(arg)
+    print('writing '+inputstring)
 
     hand = Hand()
     lines = inputstring.split("\n")
@@ -195,6 +196,8 @@ def main(argv):
         stroke_colors=stroke_colors,
         stroke_widths=stroke_widths
     )
+    
+    print('writen to '+outputfile)
 
 
 if __name__ == '__main__':
