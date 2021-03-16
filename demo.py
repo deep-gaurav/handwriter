@@ -155,7 +155,7 @@ def main(argv):
     style = 0
     outputfile = ''
     inputstring = ''
-    bias = .75
+    bias = 0.75
     color = 'blue'
     width = 1
     try:
@@ -174,7 +174,7 @@ def main(argv):
         elif opt in ("-s","--style"):
             style = int(arg)
         elif opt in ("-b","--bias"):
-            bias = int(arg)
+            bias = float(arg)
         elif opt in ("-c","--color"):
             color = arg
         elif opt in ("-w","--width"):
