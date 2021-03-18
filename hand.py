@@ -187,9 +187,9 @@ class Hand(object):
             path = svgwrite.path.Path(p)
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
             dwg.add(path)
+            initial_coord[1] -= line_height
 
             self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color,dwg=dwg,size='20px')
 
-            initial_coord[1] -= line_height
 
         dwg.save()
