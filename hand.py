@@ -60,7 +60,8 @@ class Hand(object):
                     # )
         linestosample = []
         line_nums = []
-
+        biasetosample = []
+        stylestosample = []
         for i in range(len(lines)):
             line_splits = []
             lastpos = 0
@@ -74,12 +75,14 @@ class Hand(object):
             line_splits.append(line[lastpos:])
             linestosample.extend(line_splits)
             line_nums.extend([i for x in line_splits])
+            biasetosample = [biases[i] for x in line_splits]
+            stylestosample = [styles[i] for x in line_splits]
         print "Sampling for"
         for lin in linestosample:
             print lin
                         
 
-        strokes = self._sample(linestosample, biases=biases, styles=styles)
+        strokes = self._sample(linestosample, biases=biasetosample, styles=stylestosample)
         self._draw(strokes, line_nums, lines, filename, stroke_colors=stroke_colors,
                    stroke_widths=stroke_widths, line_height=line_height,
                    view_width=view_width, align_center=align_center,biases=biases,styles=styles)
