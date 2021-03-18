@@ -316,7 +316,7 @@ def textwidth(text, fontsize=14):
     try:
         import cairo
     except Exception, e:
-        return len(str) * fontsize
+        return len(text) * fontsize
     surface = cairo.SVGSurface('undefined.svg', 1280, 200)
     cr = cairo.Context(surface)
     cr.select_font_face('Arial', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
