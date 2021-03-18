@@ -145,7 +145,7 @@ class Hand(object):
         samples = [sample[~np.all(sample == 0.0, axis=1)] for sample in samples]
         return samples
 
-    def removeinvalid(self,line, replchar = '\x00'):
+    def removeinvalid(self,line, replchar = ''):
         valid_char_set = set(drawing.alphabet)
         chars = set(list(line))
         for c in chars:
@@ -238,7 +238,7 @@ class Hand(object):
                     g.add(t)
                     dwg.add(g)
                     lastshift+=size
-                if segment=='\x00':
+                if not segment:
                     print "Skipping segment"
                     continue
                 offsets = split_val
