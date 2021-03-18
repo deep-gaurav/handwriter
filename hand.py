@@ -69,8 +69,7 @@ class Hand(object):
         strokes = self._sample(linestosample, biases=biases, styles=styles)
         self._draw(strokes, lines, filename, stroke_colors=stroke_colors,
                    stroke_widths=stroke_widths, line_height=line_height,
-                   view_width=view_width, align_center=align_center)
-        self._fix_unknownchar(lines,biases=biases,styles=styles)
+                   view_width=view_width, align_center=align_center,biases=biases,styles=styles)
 
     def _sample(self, lines, biases=None, styles=None):
         num_samples = len(lines)
@@ -118,28 +117,34 @@ class Hand(object):
         samples = [sample[~np.all(sample == 0.0, axis=1)] for sample in samples]
         return samples
 
-    def _fix_unknownchar(self,lines,biases=None, styles=None):
+    def removeinvalid(line):
+        valid_char_set = set(drawing.alphabet)
+        for c in valid_char_set:
+            line.replace(c,' ')
+        return line
+
+    def _fix_unknownchar(self,line,bias=None, style=None,yoff=0):
         valid_char_set = set(drawing.alphabet)
 
-        for lc,line in enumerate(lines):
-            for i,c in enumerate(line):
-                if c not in valid_char_set:
-                    strokes = self._sample([line[:i]],biases=[biases[lc]],styles=[styles[lc]])
-                    offsets = strokes[0]
-                    offsets[:, :2] *= 1.5
-                    strokes = drawing.offsets_to_coords(offsets)
-                    strokes = drawing.denoise(strokes)
-                    strokes[:, :2] = drawing.align(strokes[:, :2])
+        for i,c in enumerate(line):
+            if c not in valid_char_set:
+                strokes = self._sample([removeinvalid(line[:i])],biases=[bias],styles=[style])
+                offsets = strokes[0]
+                offsets[:, :2] *= 1.5
+                strokes = drawing.offsets_to_coords(offsets)
+                strokes = drawing.denoise(strokes)
+                strokes[:, :2] = drawing.align(strokes[:, :2])
 
-                    strokes[:, 1] *= -1
-                    # strokes[:, :2] -= strokes[:, :2].min() + initial_coord
-                    width = strokes[:, 0].max()
-                    print "Offset x for {} is {}".format(c,width)
+                strokes[:, 1] *= -1
+                # strokes[:, :2] -= strokes[:, :2].min() + initial_coord
+                width = strokes[:, 0].max()
+                print "Offset x for {} is {}".format(c,width)
+                print "Offset y for {} is {}".format(c,yoff)
 
 
 
     def _draw(self, strokes, lines, filename, stroke_colors=None, stroke_widths=None,
-              line_height=60, view_width=1000, align_center=True):
+              line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
         stroke_colors = stroke_colors or ['black'] * len(lines)
         stroke_widths = stroke_widths or [2] * len(lines)
 
@@ -150,7 +155,7 @@ class Hand(object):
         dwg.add(dwg.rect(insert=(0, 0), size=(view_width, view_height), fill='white'))
 
         initial_coord = np.array([0, -(3 * line_height / 4)])
-        for offsets, line, color, width in zip(strokes, lines, stroke_colors, stroke_widths):
+        for lc, offsets, line, color, width in zip(range(len(lines)),strokes, lines, stroke_colors, stroke_widths):
 
             if not line:
                 initial_coord[1] -= line_height
@@ -176,6 +181,8 @@ class Hand(object):
             path = svgwrite.path.Path(p)
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
             dwg.add(path)
+
+            self._fix_unknownchar(line,bias=[biases[lc]],style=[styles[lc]],yoff=-initial_coord[1])
 
             initial_coord[1] -= line_height
 
