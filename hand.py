@@ -233,7 +233,7 @@ class Hand(object):
                     chartoinser = removedchars[line_num][split_num-1]
                     size = 20
                     yoff = -initial_coord[1]
-                    g = dwg.g(style="font-size:{};font-family:Caveat;stroke:{};fill:{};".format(size,color,color))
+                    g = dwg.g(style="font-size:{};font-family:Caveat;fill:{};".format(size,color,color))
                     t = dwg.text(chartoinser,x=[lastshift],y=[yoff+size],font_size=str(size)+'px',fill=color)
                     g.add(t)
                     dwg.add(g)
