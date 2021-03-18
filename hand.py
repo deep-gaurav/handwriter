@@ -80,8 +80,8 @@ class Hand(object):
             line_splits.append(line[lastpos:].strip())
             linestosample.extend(line_splits)
             line_nums.extend([i for x in line_splits])
-            biasetosample = [biases[i] for x in line_splits]
-            stylestosample = [styles[i] for x in line_splits]
+            biasetosample.extend( [biases[i] for x in line_splits])
+            stylestosample.extend([styles[i] for x in line_splits])
             charbeingremoved.append(removedchar)
         print "Sampling for"
         for i in range(len(linestosample)):
