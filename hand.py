@@ -72,13 +72,14 @@ class Hand(object):
             for charpos,char in enumerate(line):
                 if char not in valid_char_set:
                     print "Removing ", char
+                    originalpos = charpos
                     while charpos>0 and line[charpos-1]==' ':
                         charpos-=1
                     removedchar.append(char)
                     line_splits.append(
                         line[lastpos:charpos]
                     )
-                    lastpos=charpos+1
+                    lastpos=originalpos+1
             line_splits.append(line[lastpos:])
             linestosample.extend(line_splits)
             line_nums.extend([i for x in line_splits])
