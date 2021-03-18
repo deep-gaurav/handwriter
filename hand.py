@@ -132,7 +132,7 @@ class Hand(object):
                     strokes[:, :2] = drawing.align(strokes[:, :2])
 
                     strokes[:, 1] *= -1
-                    strokes[:, :2] -= strokes[:, :2].min() + initial_coord
+                    # strokes[:, :2] -= strokes[:, :2].min() + initial_coord
                     width = strokes[:, 0].max()
                     print "Offset x for {} is {}".format(c,width)
 
