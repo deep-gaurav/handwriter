@@ -174,10 +174,10 @@ class Hand(object):
 
     def _draw(self, strokes, line_nums, lines, filename, stroke_colors=None, stroke_widths=None,
               line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
-        print "Strokes "
-        print strokes
-        print "Line nums"
-        print line_nums
+        # print "Strokes "
+        # print strokes
+        # print "Line nums"
+        # print line_nums
         stroke_colors = stroke_colors or ['black'] * len(lines)
         stroke_widths = stroke_widths or [2] * len(lines)
 
@@ -208,15 +208,16 @@ class Hand(object):
             lastshift = 0
 
             for split_num,split_val in enumerate(line_splits):
-
+                if(split_num>0):
+                    break;
                 color = ["red","green","black"][split_num]
                 offsets = split_val
                 offsets[:, :2] *= 1.5
-                print "Offsets"
-                print offsets
+                # print "Offsets"
+                # print offsets
                 strokes = drawing.offsets_to_coords(offsets)
-                print "Coords"
-                print strokes
+                # print "Coords"
+                # print strokes
                 strokes = drawing.denoise(strokes)
                 strokes[:, :2] = drawing.align(strokes[:, :2])
 
