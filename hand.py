@@ -212,7 +212,7 @@ class Hand(object):
 
                 if align_center:
                     strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
-                stroke[:,0]+=lastshift
+                strokes[:,0]+=lastshift
                 lastshift=strokes[:, 0].max()
 
                 prev_eos = 1.0
