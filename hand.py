@@ -233,7 +233,7 @@ class Hand(object):
                 lastshift=strokes[:, 0].max()
 
                 if split_num>0:
-                    chartoinser = removedchar[line_num][split_num-1]
+                    chartoinser = removedchars[line_num][split_num-1]
                     size = 20
                     yoff = -initial_coord[1]
                     t = dwg.text(c,insert = (lastshift-20, yoff),font_size=str(size)+'px',fill=color)
