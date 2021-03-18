@@ -253,7 +253,7 @@ class Hand(object):
                 if align_center:
                     strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
                 
-                print "segment starts at ",zip(*strokes.T)[0].0
+                print "segment starts at ",zip(*strokes.T)[0][0]
                 strokes[:,0]+=lastshift
                 
 
