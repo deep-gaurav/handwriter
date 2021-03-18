@@ -221,7 +221,7 @@ class Hand(object):
                     chartoinser = removedchars[line_num][split_num-1]
                     size = 20
                     yoff = -initial_coord[1]
-                    t = dwg.text(chartoinser,x=[lastshift],y=[yoff],font_size=str(size)+'px',fill=color)
+                    t = dwg.text(chartoinser,x=[lastshift+size],y=[yoff+size],font_size=str(size)+'px',fill=color)
                     dwg.add(t)
                 offsets = split_val
                 offsets[:, :2] *= 1.5
