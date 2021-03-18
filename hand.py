@@ -132,7 +132,7 @@ class Hand(object):
 
         for i,c in enumerate(line):
             if c not in valid_char_set:
-                l2 = self.removeinvalid(line[:i])
+                l2 = self.removeinvalid(line[:i+1])
                 print "Finding cooord using {} bias {} style {}".format(l2,bias,style)
                 strokes = self._sample([l2],biases=[bias],styles=[style])
                 offsets = strokes[0]
@@ -188,7 +188,7 @@ class Hand(object):
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
             dwg.add(path)
 
-            self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color,dwg=dwg)
+            self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color,dwg=dwg,size=line_height)
 
             initial_coord[1] -= line_height
 
