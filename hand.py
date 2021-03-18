@@ -232,7 +232,7 @@ class Hand(object):
 
                 if align_center:
                     strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
-                strokes[:,0]+=lastshift
+                # strokes[:,0]+=lastshift
                 lastshift=strokes[:, 0].max()
 
                 if split_num>0:
