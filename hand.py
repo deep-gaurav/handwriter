@@ -128,7 +128,9 @@ class Hand(object):
 
         for i,c in enumerate(line):
             if c not in valid_char_set:
-                strokes = self._sample([(line[:i])],biases=[bias],styles=[style])
+                l2 = self.removeinvalid(line[:i])
+                print "Finding cooord using {}".format(l2)
+                strokes = self._sample([l2],biases=[bias],styles=[style])
                 offsets = strokes[0]
                 offsets[:, :2] *= 1.5
                 strokes = drawing.offsets_to_coords(offsets)
