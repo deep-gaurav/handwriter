@@ -235,6 +235,7 @@ class Hand(object):
                     t = dwg.text(chartoinser,x=[lastshift+size],y=[yoff+size],font_size=str(size)+'px',fill=color)
                     g.add(t)
                     dwg.add(g)
+                    lastshift+=size
                 offsets = split_val
 
                 print "Offsets"
