@@ -198,7 +198,7 @@ class Hand(object):
         stroke_colors = stroke_colors or ['black'] * len(lines)
         stroke_widths = stroke_widths or [2] * len(lines)
 
-        view_height = line_height * (len(strokesmain) + 1)
+        view_height = line_height * (len(lines) + 1)
 
         dwg = svgwrite.Drawing(filename=filename)
         dwg.viewbox(width=view_width, height=view_height)
