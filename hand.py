@@ -62,6 +62,10 @@ class Hand(object):
 
         for i in range(len(lines)):
             linestosample[i]=self.removeinvalid(lines[i])
+        
+        print "Sampling for"
+        for lin in linestosample:
+            print lin
                         
 
         strokes = self._sample(linestosample, biases=biases, styles=styles)
