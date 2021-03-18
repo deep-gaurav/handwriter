@@ -217,6 +217,12 @@ class Hand(object):
             lastshift = 0
 
             for split_num,split_val in enumerate(line_splits):
+                if split_num>0:
+                    chartoinser = removedchars[line_num][split_num-1]
+                    size = 20
+                    yoff = -initial_coord[1]
+                    t = dwg.text(chartoinser,x=[lastshift],y=[yoff],font_size=str(size)+'px',fill=color)
+                    dwg.add(t)
                 offsets = split_val
                 offsets[:, :2] *= 1.5
                 # print "Offsets"
@@ -232,15 +238,11 @@ class Hand(object):
 
                 if align_center:
                     strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
-                # strokes[:,0]+=lastshift
+                
+                strokes[:,0]+=lastshift
                 lastshift=strokes[:, 0].max()
 
-                if split_num>0:
-                    chartoinser = removedchars[line_num][split_num-1]
-                    size = 20
-                    yoff = -initial_coord[1]
-                    t = dwg.text(chartoinser,x=[lastshift],y=[yoff],font_size=str(size)+'px',fill=color)
-                    dwg.add(t)
+                
 
                 prev_eos = 1.0
                 p = "M{},{} ".format(0, 0)
