@@ -78,7 +78,7 @@ class Hand(object):
             biasetosample = [biases[i] for x in line_splits]
             stylestosample = [styles[i] for x in line_splits]
         print "Sampling for"
-        for i in range(linestosample):
+        for i in range(len(linestosample)):
             linestosample[i] = linestosample[i].strip()
                         
 
