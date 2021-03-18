@@ -208,6 +208,8 @@ class Hand(object):
             lastshift = 0
 
             for split_num,split_val in enumerate(line_splits):
+
+                color = ["red","green","black"][split_num]
                 offsets = split_val
                 offsets[:, :2] *= 1.5
                 print "Offsets"
