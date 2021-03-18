@@ -123,7 +123,7 @@ class Hand(object):
             line.replace(c,' ')
         return line
 
-    def _fix_unknownchar(self,line,bias=None, style=None,yoff=0,color='black',size='10px'):
+    def _fix_unknownchar(self,line,bias=None, style=None,yoff=0,color='black',size='10px',dwg):
         valid_char_set = set(drawing.alphabet)
 
         for i,c in enumerate(line):
@@ -184,7 +184,7 @@ class Hand(object):
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
             dwg.add(path)
 
-            self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color)
+            self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color,dwg)
 
             initial_coord[1] -= line_height
 
