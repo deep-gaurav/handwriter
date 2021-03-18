@@ -87,7 +87,7 @@ class Hand(object):
         for i in range(len(linestosample)):
             linestosample[i] = linestosample[i].strip()
             if not linestosample[i]:
-                linestosample[i]= ' '
+                linestosample[i]= '\x00'
             print linestosample[i]
                         
         print "Sending samples", linestosample, "Biases", biasetosample, "styles", stylestosample
