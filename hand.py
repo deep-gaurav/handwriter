@@ -222,6 +222,7 @@ class Hand(object):
             lastshift = 0
 
             for split_num,split_val in enumerate(line_splits):
+                print "Drawing line ",line_num, "split ", split_num
                 if split_num>0:
                     chartoinser = removedchars[line_num][split_num-1]
                     size = 20
