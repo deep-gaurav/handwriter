@@ -237,6 +237,7 @@ class Hand(object):
                     t = dwg.text(chartoinser,x=[lastshift],y=[yoff+size],font_size=str(size)+'px',fill=color)
                     g.add(t)
                     dwg.add(g)
+                    w = textwidth(chartoinser,font_size=size)
                     lastshift+=size
                 if not segment:
                     print "Skipping segment"
@@ -310,3 +311,15 @@ class Hand(object):
         #     initial_coord[1] -= line_height
 
         # dwg.save()
+
+def textwidth(text, fontsize=14):
+    try:
+        import cairo
+    except Exception, e:
+        return len(str) * fontsize
+    surface = cairo.SVGSurface('undefined.svg', 1280, 200)
+    cr = cairo.Context(surface)
+    cr.select_font_face('Arial', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    cr.set_font_size(fontsize)
+    xbearing, ybearing, width, height, xadvance, yadvance = cr.text_extents(text)
+    return width
