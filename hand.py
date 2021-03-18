@@ -133,23 +133,30 @@ class Hand(object):
 
         for i,c in enumerate(line):
             if c not in valid_char_set:
+                l2 = self.removeinvalid(line[:i+1], replchar='A')
                 l2 = self.removeinvalid(line[:i+2], replchar='A')
                 print "Finding cooord using {} bias {} style {}".format(l2,bias,style)
-                strokes = self._sample([l2],biases=[bias],styles=[style])
-                offsets = strokes[0]
-                offsets[:, :2] *= 1.5
-                strokes = drawing.offsets_to_coords(offsets)
-                strokes = drawing.denoise(strokes)
-                strokes[:, :2] = drawing.align(strokes[:, :2])
+                
+                w1 = self.getwidthofline(l1,bias,style)
+                w2 = self.getwidthofline(l2,bias,style)
+                
+                width = (w1+w2)/2
 
-                strokes[:, 1] *= -1
-                # strokes[:, :2] -= strokes[:, :2].min() + initial_coord
-                width = strokes[:, 0].max() - size
                 print "Offset x for {} is {}".format(c,width)
                 print "Offset y for {} is {}".format(c,yoff)
                 t = dwg.text(c,insert = (width, yoff),font_size=str(size)+'px',fill=color)
                 dwg.add(t)
 
+    def getwidthofline(self,line,bias,style):
+        strokes = self._sample([l2],biases=[bias],styles=[style])
+        offsets = strokes[0]
+        offsets[:, :2] *= 1.5
+        strokes = drawing.offsets_to_coords(offsets)
+        strokes = drawing.denoise(strokes)
+        strokes[:, :2] = drawing.align(strokes[:, :2])
+
+        strokes[:, 1] *= -1
+        return width = strokes[:, 0].max()
 
     def _draw(self, strokes, lines, filename, stroke_colors=None, stroke_widths=None,
               line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
