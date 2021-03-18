@@ -63,7 +63,7 @@ class Hand(object):
         for line_num, line in enumerate(lines):
             for char in line:
                 if char not in valid_char_set:
-                    lines.replace(char,' ')
+                    linestosample[line_num].replace(char,' ')
                         
 
         strokes = self._sample(linestosample, biases=biases, styles=styles)
