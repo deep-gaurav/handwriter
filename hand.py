@@ -117,7 +117,7 @@ class Hand(object):
         samples = [sample[~np.all(sample == 0.0, axis=1)] for sample in samples]
         return samples
 
-    def removeinvalid(line):
+    def removeinvalid(self,line):
         valid_char_set = set(drawing.alphabet)
         for c in valid_char_set:
             line.replace(c,' ')
