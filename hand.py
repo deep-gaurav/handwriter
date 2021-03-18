@@ -184,12 +184,12 @@ class Hand(object):
         strokes[:, 1] *= -1
         return strokes[:, 0].max()
 
-    def _draw(self, strokes, line_nums, lines, removedchars, filename, stroke_colors=None, stroke_widths=None,
+    def _draw(self, strokesmain, line_nums, lines, removedchars, filename, stroke_colors=None, stroke_widths=None,
               line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
         print "Strokes "
-        for i in range(len(strokes)):
+        for i in range(len(strokesmain)):
             print "Stroke ",i+1
-            print strokes[i]
+            print strokesmain[i]
         
         print "Line nums"
         print line_nums
@@ -198,7 +198,7 @@ class Hand(object):
         stroke_colors = stroke_colors or ['black'] * len(lines)
         stroke_widths = stroke_widths or [2] * len(lines)
 
-        view_height = line_height * (len(strokes) + 1)
+        view_height = line_height * (len(strokesmain) + 1)
 
         dwg = svgwrite.Drawing(filename=filename)
         dwg.viewbox(width=view_width, height=view_height)
@@ -212,7 +212,8 @@ class Hand(object):
             line_splits = []
             while True:
                 if i<len(line_nums) and line_num == line_nums[i]:
-                    line_splits.append(strokes[i])
+                    
+                    line_splits.append(strokesmain[i])
                     i+=1
                 else:
                     break
