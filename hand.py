@@ -133,7 +133,7 @@ class Hand(object):
 
         for i,c in enumerate(line):
             if c not in valid_char_set:
-                l2 = self.removeinvalid(line[:i+1], replchar='A')
+                l1 = self.removeinvalid(line[:i+1], replchar='A')
                 l2 = self.removeinvalid(line[:i+2], replchar='A')
                 print "Finding cooord using {} bias {} style {}".format(l2,bias,style)
                 
