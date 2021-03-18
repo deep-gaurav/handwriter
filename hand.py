@@ -124,7 +124,7 @@ class Hand(object):
         chars = set(list(line))
         for c in chars:
             if c not in valid_char_set:
-                line.replace(c,' ')
+                line=line.replace(c,' ')
         return line
 
     def _fix_unknownchar(self,line,dwg,bias=None, style=None,yoff=0,color='black',size='10px'):
