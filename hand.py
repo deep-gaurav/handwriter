@@ -237,7 +237,7 @@ class Hand(object):
                     t = dwg.text(chartoinser,x=[lastshift],y=[yoff+size],font_size=str(size)+'px',fill=color)
                     g.add(t)
                     dwg.add(g)
-                    w = textwidth(chartoinser,font_size=size)
+                    w = textwidth(chartoinser,fontsize=size)
                     lastshift+=size
                 if not segment:
                     print "Skipping segment"
