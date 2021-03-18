@@ -226,7 +226,7 @@ class Hand(object):
                 continue
             lastshift = 0
 
-            for split_num,split_val,segment in enumerate(line_splits):
+            for split_num,split_val in enumerate(line_splits):
                 segment=sseg[split_num]
                 print "Drawing line ",line_num, "split ", split_num, "Segment", segment
                 if split_num>0:
