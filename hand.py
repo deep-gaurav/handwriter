@@ -156,7 +156,7 @@ class Hand(object):
         strokes[:, :2] = drawing.align(strokes[:, :2])
 
         strokes[:, 1] *= -1
-        return width = strokes[:, 0].max()
+        return strokes[:, 0].max()
 
     def _draw(self, strokes, lines, filename, stroke_colors=None, stroke_widths=None,
               line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
