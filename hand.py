@@ -177,15 +177,14 @@ class Hand(object):
 
             prev_eos = 1.0
             p = "M{},{} ".format(0, 0)
-            i = 0
             for x, y, eos in zip(*strokes.T):
-                i+=1                
+                p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
                 prev_eos = eos
             path = svgwrite.path.Path(p)
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
             dwg.add(path)
 
-            # self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color)
+            self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color)
 
             initial_coord[1] -= line_height
 
