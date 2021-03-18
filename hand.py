@@ -119,7 +119,7 @@ class Hand(object):
         samples = [sample[~np.all(sample == 0.0, axis=1)] for sample in samples]
         return samples
 
-    def removeinvalid(self,line, replchar = ' '):
+    def removeinvalid(self,line, replchar = '  '):
         valid_char_set = set(drawing.alphabet)
         chars = set(list(line))
         for c in chars:
@@ -133,8 +133,8 @@ class Hand(object):
 
         for i,c in enumerate(line):
             if c not in valid_char_set:
-                l1 = self.removeinvalid(line[:i+1], replchar='A')
-                l2 = self.removeinvalid(line[:i+2], replchar='A')
+                l1 = self.removeinvalid(line[:i+1], replchar='  ')
+                l2 = self.removeinvalid(line[:i+2], replchar='  ')
                 print "Finding cooord using {} bias {} style {}".format(l2,bias,style)
                 
                 w1 = self.getwidthofline(l1,bias,style)
