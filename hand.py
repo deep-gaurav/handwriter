@@ -93,7 +93,7 @@ class Hand(object):
         print "Sending samples", linestosample, "Biases", biasetosample, "styles", stylestosample
         strokes = self._sample(linestosample, biases=biasetosample, styles=stylestosample)
         print "Strokes generated", strokes
-        self._draw(strokes, line_nums,linestosample, lines, charbeingremoved, filename, stroke_colors=stroke_colors,
+        self._draw(strokes,linestosample, line_nums, lines, charbeingremoved, filename, stroke_colors=stroke_colors,
                    stroke_widths=stroke_widths, line_height=line_height,
                    view_width=view_width, align_center=align_center,biases=biases,styles=styles)
 
