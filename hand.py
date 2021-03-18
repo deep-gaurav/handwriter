@@ -171,9 +171,7 @@ class Hand(object):
             p = "M{},{} ".format(0, 0)
             i = 0
             for x, y, eos in zip(*strokes.T):
-                i+=1
-                p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
-                
+                i+=1                
                 prev_eos = eos
             path = svgwrite.path.Path(p)
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
