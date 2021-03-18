@@ -152,7 +152,7 @@ class Hand(object):
             for x, y, eos in zip(*strokes.T):
                 i+=1
                 p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
-                print('Writing char ',line[i])
+                print "Writing eos {}".format(i)
                 prev_eos = eos
             path = svgwrite.path.Path(p)
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
