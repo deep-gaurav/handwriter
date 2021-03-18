@@ -263,6 +263,7 @@ class Hand(object):
                 for x, y, eos in zip(*strokes.T):
                     p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
                     prev_eos = eos
+                    lastshift = x
                 path = svgwrite.path.Path(p)
                 path = path.stroke(color=color, width=width, linecap='round').fill("none")
                 dwg.add(path)
