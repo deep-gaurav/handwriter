@@ -58,18 +58,29 @@ class Hand(object):
                     #         "Valid character set is {}"
                     #     ).format(char, line_num, valid_char_set)
                     # )
-        linestosample = list(lines)
+        linestosample = []
+        line_nums = []
 
         for i in range(len(lines)):
-            linestosample[i]=self.removeinvalid(linestosample[i])
-        
+            line_splits = []
+            lastpos = 0
+            line = lines[i]
+            for charpos,char in enumerate(line):
+                if char not in valid_char_set:
+                    line_splits.append(
+                        line[lastpos:charpos+1]
+                    )
+                    lastpos=charpos+1
+            line_splits.append(line[lastpos:])
+            linestosample.extend(line_splits)
+            line_nums.extend([i for x in line_splits])
         print "Sampling for"
         for lin in linestosample:
             print lin
                         
 
         strokes = self._sample(linestosample, biases=biases, styles=styles)
-        self._draw(strokes, lines, filename, stroke_colors=stroke_colors,
+        self._draw(strokes, line_nums, lines, filename, stroke_colors=stroke_colors,
                    stroke_widths=stroke_widths, line_height=line_height,
                    view_width=view_width, align_center=align_center,biases=biases,styles=styles)
 
@@ -158,7 +169,7 @@ class Hand(object):
         strokes[:, 1] *= -1
         return strokes[:, 0].max()
 
-    def _draw(self, strokes, lines, filename, stroke_colors=None, stroke_widths=None,
+    def _draw(self, strokes, line_nums, lines, filename, stroke_colors=None, stroke_widths=None,
               line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
         stroke_colors = stroke_colors or ['black'] * len(lines)
         stroke_widths = stroke_widths or [2] * len(lines)
@@ -170,34 +181,77 @@ class Hand(object):
         dwg.add(dwg.rect(insert=(0, 0), size=(view_width, view_height), fill='white'))
 
         initial_coord = np.array([0, -(3 * line_height / 4)])
-        for lc, offsets, line, color, width in zip(range(len(lines)),strokes, lines, stroke_colors, stroke_widths):
 
+        i=0
+        while i<len(line_nums):
+            line_num = line_nums[i]
+            line_splits = []
+            while True:
+                if line_num == line_nums[i]:
+                    line_splits.append(strokes[i])
+                    i+=1
+            line = lines[line_num]
+            color= stroke_colors[line_num]
+            width =stroke_widths[line_num]
             if not line:
                 initial_coord[1] -= line_height
                 continue
+            lastshift = 0
 
-            offsets[:, :2] *= 1.5
-            strokes = drawing.offsets_to_coords(offsets)
-            strokes = drawing.denoise(strokes)
-            strokes[:, :2] = drawing.align(strokes[:, :2])
+            for split_num,split_val in enumerate(line_splits):
+                offsets = split_val
+                offsets[:, :2] *= 1.5
+                strokes = drawing.offsets_to_coords(offsets)
+                strokes = drawing.denoise(strokes)
+                strokes[:, :2] = drawing.align(strokes[:, :2])
 
-            strokes[:, 1] *= -1
-            strokes[:, :2] -= strokes[:, :2].min() + initial_coord
+                strokes[:, 1] *= -1
+                strokes[:, :2] -= strokes[:, :2].min() + initial_coord
 
-            if align_center:
-                strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
+                if align_center:
+                    strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
+                stroke[:,0]+=lastshift
+                lastshift=strokes[:, 0].max()
 
-            prev_eos = 1.0
-            p = "M{},{} ".format(0, 0)
-            for x, y, eos in zip(*strokes.T):
-                p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
-                prev_eos = eos
-            path = svgwrite.path.Path(p)
-            path = path.stroke(color=color, width=width, linecap='round').fill("none")
-            dwg.add(path)
-
-            self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color,dwg=dwg,size=20)
+                prev_eos = 1.0
+                p = "M{},{} ".format(0, 0)
+                for x, y, eos in zip(*strokes.T):
+                    p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
+                    prev_eos = eos
+                path = svgwrite.path.Path(p)
+                path = path.stroke(color=color, width=width, linecap='round').fill("none")
+                dwg.add(path)
 
             initial_coord[1] -= line_height
-
         dwg.save()
+        # for lc, offsets, line, color, width in zip(range(len(lines)),strokes, lines, stroke_colors, stroke_widths):
+
+        #     if not line:
+        #         initial_coord[1] -= line_height
+        #         continue
+
+        #     offsets[:, :2] *= 1.5
+        #     strokes = drawing.offsets_to_coords(offsets)
+        #     strokes = drawing.denoise(strokes)
+        #     strokes[:, :2] = drawing.align(strokes[:, :2])
+
+        #     strokes[:, 1] *= -1
+        #     strokes[:, :2] -= strokes[:, :2].min() + initial_coord
+
+        #     if align_center:
+        #         strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
+
+        #     prev_eos = 1.0
+        #     p = "M{},{} ".format(0, 0)
+        #     for x, y, eos in zip(*strokes.T):
+        #         p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
+        #         prev_eos = eos
+        #     path = svgwrite.path.Path(p)
+        #     path = path.stroke(color=color, width=width, linecap='round').fill("none")
+        #     dwg.add(path)
+
+        #     self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color,dwg=dwg,size=20)
+
+        #     initial_coord[1] -= line_height
+
+        # dwg.save()
