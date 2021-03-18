@@ -68,7 +68,7 @@ class Hand(object):
             for charpos,char in enumerate(line):
                 if char not in valid_char_set:
                     line_splits.append(
-                        line[lastpos:charpos+1]
+                        line[lastpos:charpos]
                     )
                     lastpos=charpos+1
             line_splits.append(line[lastpos:])
@@ -187,9 +187,11 @@ class Hand(object):
             line_num = line_nums[i]
             line_splits = []
             while True:
-                if line_num == line_nums[i]:
+                if i<len(line_nums) and line_num == line_nums[i]:
                     line_splits.append(strokes[i])
                     i+=1
+                else:
+                    break
             line = lines[line_num]
             color= stroke_colors[line_num]
             width =stroke_widths[line_num]
