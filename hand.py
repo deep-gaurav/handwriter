@@ -123,7 +123,7 @@ class Hand(object):
             line.replace(c,' ')
         return line
 
-    def _fix_unknownchar(self,line,bias=None, style=None,yoff=0):
+    def _fix_unknownchar(self,line,bias=None, style=None,yoff=0,color='black',size='10px'):
         valid_char_set = set(drawing.alphabet)
 
         for i,c in enumerate(line):
@@ -142,7 +142,8 @@ class Hand(object):
                 width = strokes[:, 0].max()
                 print "Offset x for {} is {}".format(c,width)
                 print "Offset y for {} is {}".format(c,yoff)
-
+                t = dwg.text(c,insert = (width, yoff),font_size=size,fill=color)
+                dwg.add(t)
 
 
     def _draw(self, strokes, lines, filename, stroke_colors=None, stroke_widths=None,
@@ -184,7 +185,7 @@ class Hand(object):
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
             dwg.add(path)
 
-            self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1])
+            # self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color)
 
             initial_coord[1] -= line_height
 
