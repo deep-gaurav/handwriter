@@ -85,6 +85,8 @@ class Hand(object):
         print "Sampling for"
         for i in range(len(linestosample)):
             linestosample[i] = linestosample[i].strip()
+            if not linestosample[i]:
+                linestosample[i]= ' '
             print linestosample[i]
                         
 
