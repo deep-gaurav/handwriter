@@ -57,8 +57,15 @@ class Hand(object):
                             "Valid character set is {}"
                         ).format(char, line_num, valid_char_set)
                     )
+        linestosample = lines(lines)
 
-        strokes = self._sample(lines, biases=biases, styles=styles)
+        for line_num, line in enumerate(lines):
+            for char in line:
+                if char not in valid_char_set:
+                    lines.replace(char,' ')
+                        
+
+        strokes = self._sample(linestosample, biases=biases, styles=styles)
         self._draw(strokes, lines, filename, stroke_colors=stroke_colors,
                    stroke_widths=stroke_widths, line_height=line_height,
                    view_width=view_width, align_center=align_center)
@@ -140,8 +147,11 @@ class Hand(object):
 
             prev_eos = 1.0
             p = "M{},{} ".format(0, 0)
+            i = 0
             for x, y, eos in zip(*strokes.T):
+                i+=1
                 p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
+                print('Writing char ',line[i])
                 prev_eos = eos
             path = svgwrite.path.Path(p)
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
