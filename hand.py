@@ -39,6 +39,7 @@ class Hand(object):
 
     def write(self, filename, lines, biases=None, styles=None, stroke_colors=None,
               stroke_widths=None, line_height=60, view_width=1000, align_center=False):
+        print "received lines",lines
         valid_char_set = set(drawing.alphabet)
         for line_num, line in enumerate(lines):
             if len(line) > 75:
