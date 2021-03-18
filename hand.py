@@ -61,7 +61,7 @@ class Hand(object):
         linestosample = list(lines)
 
         for i in range(len(lines)):
-            linestosample[i]=self.removeinvalid(lines[i])
+            linestosample[i]=self.removeinvalid(linestosample[i])
         
         print "Sampling for"
         for lin in linestosample:
@@ -121,7 +121,7 @@ class Hand(object):
 
     def removeinvalid(self,line):
         valid_char_set = set(drawing.alphabet)
-        for c in valid_char_set:
+        for c not in valid_char_set:
             line.replace(c,' ')
         return line
 
