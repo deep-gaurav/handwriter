@@ -239,15 +239,16 @@ class Hand(object):
                     dwg.add(g)
                     lastshift+=size
                 if segment=='\x00':
+                    print "Skipping segment"
                     continue
                 offsets = split_val
 
-                print "Offsets"
-                print offsets
+                # print "Offsets"
+                # print offsets
                 offsets[:, :2] *= 1.5
                 strokes = drawing.offsets_to_coords(offsets)
-                print "Coords"
-                print strokes
+                # print "Coords"
+                # print strokes
                 strokes = drawing.denoise(strokes)
                 strokes[:, :2] = drawing.align(strokes[:, :2])
 
