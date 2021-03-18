@@ -85,6 +85,7 @@ class Hand(object):
         print "Sampling for"
         for i in range(len(linestosample)):
             linestosample[i] = linestosample[i].strip()
+            print linestosample[i]
                         
 
         strokes = self._sample(linestosample, biases=biasetosample, styles=stylestosample)
