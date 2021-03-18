@@ -188,7 +188,7 @@ class Hand(object):
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
             dwg.add(path)
 
-            self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color,dwg=dwg,size=line_height)
+            self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color,dwg=dwg,size='20px')
 
             initial_coord[1] -= line_height
 
