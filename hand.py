@@ -232,11 +232,11 @@ class Hand(object):
                     dwg.add(g)
                 offsets = split_val
                 offsets[:, :2] *= 1.5
-                # print "Offsets"
-                # print offsets
+                print "Offsets"
+                print offsets
                 strokes = drawing.offsets_to_coords(offsets)
-                # print "Coords"
-                # print strokes
+                print "Coords"
+                print strokes
                 strokes = drawing.denoise(strokes)
                 strokes[:, :2] = drawing.align(strokes[:, :2])
 
