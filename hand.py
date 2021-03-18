@@ -260,10 +260,12 @@ class Hand(object):
 
                 prev_eos = 1.0
                 p = "M{},{} ".format(0, 0)
+                print "starting this segment at ",lastshift
                 for x, y, eos in zip(*strokes.T):
                     p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
                     prev_eos = eos
                     lastshift = x
+                    print "Made last shift ",x
                 path = svgwrite.path.Path(p)
                 path = path.stroke(color=color, width=width, linecap='round').fill("none")
                 dwg.add(path)
