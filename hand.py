@@ -70,6 +70,7 @@ class Hand(object):
         self._draw(strokes, lines, filename, stroke_colors=stroke_colors,
                    stroke_widths=stroke_widths, line_height=line_height,
                    view_width=view_width, align_center=align_center)
+        self._fix_unknownchar(lines,biases=biases,styles=styles)
 
     def _sample(self, lines, biases=None, styles=None):
         num_samples = len(lines)
@@ -117,6 +118,26 @@ class Hand(object):
         samples = [sample[~np.all(sample == 0.0, axis=1)] for sample in samples]
         return samples
 
+    def _fix_unknownchar(self,lines,biases=None, styles=None):
+        valid_char_set = set(drawing.alphabet)
+
+        for lc,line in enumerate(lines):
+            for i,c in enumerate(line):
+                if c not in valid_char_set:
+                    strokes = self._sample([line[:i]],biases=[biases[lc]],styles=[styles[lc]])
+                    offsets = strokes[0]
+                    offsets[:, :2] *= 1.5
+                    strokes = drawing.offsets_to_coords(offsets)
+                    strokes = drawing.denoise(strokes)
+                    strokes[:, :2] = drawing.align(strokes[:, :2])
+
+                    strokes[:, 1] *= -1
+                    strokes[:, :2] -= strokes[:, :2].min() + initial_coord
+                    width = strokes[:, 0].max()
+                    print "Offset x for {} is {}".format(c,width)
+
+
+
     def _draw(self, strokes, lines, filename, stroke_colors=None, stroke_widths=None,
               line_height=60, view_width=1000, align_center=True):
         stroke_colors = stroke_colors or ['black'] * len(lines)
@@ -152,7 +173,7 @@ class Hand(object):
             for x, y, eos in zip(*strokes.T):
                 i+=1
                 p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
-                print "Writing eos {}".format(i)
+                
                 prev_eos = eos
             path = svgwrite.path.Path(p)
             path = path.stroke(color=color, width=width, linecap='round').fill("none")
