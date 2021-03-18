@@ -148,7 +148,7 @@ class Hand(object):
                 dwg.add(t)
 
     def getwidthofline(self,line,bias,style):
-        strokes = self._sample([l2],biases=[bias],styles=[style])
+        strokes = self._sample([line],biases=[bias],styles=[style])
         offsets = strokes[0]
         offsets[:, :2] *= 1.5
         strokes = drawing.offsets_to_coords(offsets)
