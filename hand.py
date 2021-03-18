@@ -62,12 +62,15 @@ class Hand(object):
         line_nums = []
         biasetosample = []
         stylestosample = []
+        charbeingremoved = []
         for i in range(len(lines)):
             line_splits = []
             lastpos = 0
             line = lines[i]
+            removedchar = []
             for charpos,char in enumerate(line):
                 if char not in valid_char_set:
+                    removedchar.append(char)
                     line_splits.append(
                         line[lastpos:charpos]
                     )
@@ -77,13 +80,14 @@ class Hand(object):
             line_nums.extend([i for x in line_splits])
             biasetosample = [biases[i] for x in line_splits]
             stylestosample = [styles[i] for x in line_splits]
+            charbeingremoved.append(removedchar)
         print "Sampling for"
         for i in range(len(linestosample)):
             linestosample[i] = linestosample[i].strip()
                         
 
         strokes = self._sample(linestosample, biases=biasetosample, styles=stylestosample)
-        self._draw(strokes, line_nums, lines, filename, stroke_colors=stroke_colors,
+        self._draw(strokes, line_nums, lines, charbeingremoved, filename, stroke_colors=stroke_colors,
                    stroke_widths=stroke_widths, line_height=line_height,
                    view_width=view_width, align_center=align_center,biases=biases,styles=styles)
 
@@ -174,7 +178,7 @@ class Hand(object):
         strokes[:, 1] *= -1
         return strokes[:, 0].max()
 
-    def _draw(self, strokes, line_nums, lines, filename, stroke_colors=None, stroke_widths=None,
+    def _draw(self, strokes, line_nums,removedchars, lines, filename, stroke_colors=None, stroke_widths=None,
               line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
         # print "Strokes "
         # print strokes
@@ -210,7 +214,6 @@ class Hand(object):
             lastshift = 0
 
             for split_num,split_val in enumerate(line_splits):
-                color = ["red","green","black"][split_num]
                 offsets = split_val
                 offsets[:, :2] *= 1.5
                 # print "Offsets"
@@ -228,6 +231,13 @@ class Hand(object):
                     strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
                 strokes[:,0]+=lastshift
                 lastshift=strokes[:, 0].max()
+
+                if split_num>0:
+                    chartoinser = removedchar[line_num][split_num-1]
+                    size = 20
+                    yoff = -initial_coord[1]
+                    t = dwg.text(c,insert = (lastshift-20, yoff),font_size=str(size)+'px',fill=color)
+                    dwg.add(t)
 
                 prev_eos = 1.0
                 p = "M{},{} ".format(0, 0)
