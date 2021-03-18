@@ -88,6 +88,8 @@ class Hand(object):
                    view_width=view_width, align_center=align_center,biases=biases,styles=styles)
 
     def _sample(self, lines, biases=None, styles=None):
+        print "Sampling lines"
+        print lines
         num_samples = len(lines)
         max_tsteps = 40 * max([len(i) for i in lines])
         biases = biases if biases is not None else [0.5] * num_samples
