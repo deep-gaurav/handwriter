@@ -204,6 +204,8 @@ class Hand(object):
                 offsets = split_val
                 offsets[:, :2] *= 1.5
                 strokes = drawing.offsets_to_coords(offsets)
+                print "Offsets"
+                print strokes
                 if(split_num==0):
                     strokes = drawing.denoise(strokes)
                     strokes[:, :2] = drawing.align(strokes[:, :2])
