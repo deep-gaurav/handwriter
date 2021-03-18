@@ -70,6 +70,7 @@ class Hand(object):
             removedchar = []
             for charpos,char in enumerate(line):
                 if char not in valid_char_set:
+                    print "Removing ", char
                     removedchar.append(char)
                     line_splits.append(
                         line[lastpos:charpos]
