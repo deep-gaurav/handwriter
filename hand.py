@@ -93,7 +93,7 @@ class Hand(object):
         print "Sending samples", linestosample, "Biases", biasetosample, "styles", stylestosample
         strokes = self._sample(linestosample, biases=biasetosample, styles=stylestosample)
         print "Strokes generated", strokes
-        self._draw(strokes, line_nums, lines, charbeingremoved, filename, stroke_colors=stroke_colors,
+        self._draw(strokes, line_nums,linestosample, lines, charbeingremoved, filename, stroke_colors=stroke_colors,
                    stroke_widths=stroke_widths, line_height=line_height,
                    view_width=view_width, align_center=align_center,biases=biases,styles=styles)
 
@@ -145,7 +145,7 @@ class Hand(object):
         samples = [sample[~np.all(sample == 0.0, axis=1)] for sample in samples]
         return samples
 
-    def removeinvalid(self,line, replchar = '  '):
+    def removeinvalid(self,line, replchar = '\x00'):
         valid_char_set = set(drawing.alphabet)
         chars = set(list(line))
         for c in chars:
@@ -184,7 +184,7 @@ class Hand(object):
         strokes[:, 1] *= -1
         return strokes[:, 0].max()
 
-    def _draw(self, strokesmain, line_nums, lines, removedchars, filename, stroke_colors=None, stroke_widths=None,
+    def _draw(self, strokesmain,sampledsegments, line_nums, lines, removedchars, filename, stroke_colors=None, stroke_widths=None,
               line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
         print "Strokes "
         for i in range(len(strokesmain)):
@@ -210,9 +210,10 @@ class Hand(object):
         while i<len(line_nums):
             line_num = line_nums[i]
             line_splits = []
+            sseg = []
             while True:
                 if i<len(line_nums) and line_num == line_nums[i]:
-                    
+                    sseg.append(sampledsegments[i])
                     line_splits.append(strokesmain[i])
                     i+=1
                 else:
@@ -225,8 +226,8 @@ class Hand(object):
                 continue
             lastshift = 0
 
-            for split_num,split_val in enumerate(line_splits):
-                print "Drawing line ",line_num, "split ", split_num
+            for split_num,split_val,segment in zip(enumerate(line_splits),sseg):
+                print "Drawing line ",line_num, "split ", split_num, "Segment", segment
                 if split_num>0:
                     chartoinser = removedchars[line_num][split_num-1]
                     size = 20
@@ -236,6 +237,8 @@ class Hand(object):
                     g.add(t)
                     dwg.add(g)
                     lastshift+=size
+                if segment=='\x00':
+                    continue
                 offsets = split_val
 
                 print "Offsets"
@@ -266,7 +269,7 @@ class Hand(object):
                     p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
                     prev_eos = eos
                     lastshift = x
-                    print "Made last shift ",x
+                    # print "Made last shift ",x
                 path = svgwrite.path.Path(p)
                 path = path.stroke(color=color, width=width, linecap='round').fill("none")
                 dwg.add(path)
