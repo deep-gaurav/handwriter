@@ -187,7 +187,10 @@ class Hand(object):
     def _draw(self, strokes, line_nums, lines, removedchars, filename, stroke_colors=None, stroke_widths=None,
               line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
         print "Strokes "
-        print strokes
+        for i in range(strokes):
+            print "Stroke ",i+1
+            print strokes[i]
+        
         print "Line nums"
         print line_nums
         print "Removed chars"
