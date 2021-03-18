@@ -206,7 +206,7 @@ class Hand(object):
                 strokes = drawing.offsets_to_coords(offsets)
                 if(split_num==0):
                     strokes = drawing.denoise(strokes)
-                strokes[:, :2] = drawing.align(strokes[:, :2])
+                    strokes[:, :2] = drawing.align(strokes[:, :2])
 
                 strokes[:, 1] *= -1
                 strokes[:, :2] -= strokes[:, :2].min() + initial_coord
