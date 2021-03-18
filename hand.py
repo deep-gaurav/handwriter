@@ -57,7 +57,7 @@ class Hand(object):
                             "Valid character set is {}"
                         ).format(char, line_num, valid_char_set)
                     )
-        linestosample = lines(lines)
+        linestosample = list(lines)
 
         for line_num, line in enumerate(lines):
             for char in line:
