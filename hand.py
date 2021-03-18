@@ -72,7 +72,7 @@ class Hand(object):
                         line[lastpos:charpos]
                     )
                     lastpos=charpos+1
-            line_splits.append(line[lastpos:])
+            line_splits.append(line[lastpos:].strip())
             linestosample.extend(line_splits)
             line_nums.extend([i for x in line_splits])
             biasetosample = [biases[i] for x in line_splits]
