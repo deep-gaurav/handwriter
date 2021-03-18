@@ -51,12 +51,13 @@ class Hand(object):
 
             for char in line:
                 if char not in valid_char_set:
-                    raise ValueError(
-                        (
-                            "Invalid character {} detected in line {}. "
-                            "Valid character set is {}"
-                        ).format(char, line_num, valid_char_set)
-                    )
+                    print("Invalid character {} detected".format(char))
+                    # raise ValueError(
+                    #     (
+                    #         "Invalid character {} detected in line {}. "
+                    #         "Valid character set is {}"
+                    #     ).format(char, line_num, valid_char_set)
+                    # )
         linestosample = list(lines)
 
         for line_num, line in enumerate(lines):
