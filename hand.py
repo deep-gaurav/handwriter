@@ -231,9 +231,10 @@ class Hand(object):
                     g.add(t)
                     dwg.add(g)
                 offsets = split_val
-                offsets[:, :2] *= 1.5
+
                 print "Offsets"
                 print offsets
+                offsets[:, :2] *= 1.5
                 strokes = drawing.offsets_to_coords(offsets)
                 print "Coords"
                 print strokes
