@@ -239,7 +239,7 @@ class Hand(object):
                     chartoinser = removedchars[line_num][split_num-1]
                     size = 20
                     yoff = -initial_coord[1]
-                    t = dwg.text(chartoinser,insert = (lastshift-20, yoff),font_size=str(size)+'px',fill=color)
+                    t = dwg.text(chartoinser,insert = (lastshift, yoff),font_size=str(size)+'px',fill=color)
                     dwg.add(t)
 
                 prev_eos = 1.0
