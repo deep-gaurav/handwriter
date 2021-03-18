@@ -133,7 +133,7 @@ class Hand(object):
 
         for i,c in enumerate(line):
             if c not in valid_char_set:
-                l2 = self.removeinvalid(line[:i+1])
+                l2 = self.removeinvalid(line[:i+2])
                 print "Finding cooord using {} bias {} style {}".format(l2,bias,style)
                 strokes = self._sample([l2],biases=[bias],styles=[style])
                 offsets = strokes[0]
@@ -144,7 +144,7 @@ class Hand(object):
 
                 strokes[:, 1] *= -1
                 # strokes[:, :2] -= strokes[:, :2].min() + initial_coord
-                width = strokes[:, 0].max()
+                width = strokes[:, 0].max() - size
                 print "Offset x for {} is {}".format(c,width)
                 print "Offset y for {} is {}".format(c,yoff)
                 t = dwg.text(c,insert = (width, yoff),font_size=str(size)+'px',fill=color)
