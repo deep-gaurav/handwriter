@@ -114,7 +114,7 @@ class Hand(object):
             if line:
                 strokes.extend(self._sample([line], biases=[bias], styles=[style]))
             else:
-                strokes.extend([])
+                strokes.extend([[0,0,0]])
         print "Strokes generated", strokes
         self._draw(strokes,linestosample, line_nums, lines, charbeingremoved, filename, stroke_colors=stroke_colors,
                    stroke_widths=stroke_widths, line_height=line_height,
