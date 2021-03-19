@@ -13,7 +13,7 @@ def accomodate_list_to_character_limit(lines):
             if wheretocut <= 2:
                 wheretocut = character_limit-2
             line_2 = line[wheretocut:]  # Later longs part
-            line_1 = line[:wheretocut]  # First part
+            line_1 = line[:wheretocut].rstrip()  # First part
             formatted_lines.append(line_1)
             split_if_greater(line_2)
         else:
