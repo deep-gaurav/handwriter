@@ -84,6 +84,10 @@ class Hand(object):
                     removedchar.append(char)
                     line_splits.append(line[lastpos:charpos])
                     lastpos=charpos+1
+                elif lastpos=charpos-1 and (charpos==len(line)-1 or (line[charpos+1] not in valid_char_set)):
+                    removedchar.append(char)
+                    line_splits.append(line[lastpos:charpos])
+                    lastpos=charpos+1
             line_splits.append(line[lastpos:])
             linestosample.extend(line_splits)
             line_nums.extend([i for x in line_splits])
@@ -98,7 +102,9 @@ class Hand(object):
             print linestosample[i]
                         
         print "Sending samples", linestosample, "Biases", biasetosample, "styles", stylestosample
-        strokes = self._sample(linestosample, biases=biasetosample, styles=stylestosample)
+        strokes = []
+        for line,bias,style in zip(linestosample,biasetosample,stylestosample):
+            strokes.extend(self._sample([line], biases=[bias], styles=[style]))
         print "Strokes generated", strokes
         self._draw(strokes,linestosample, line_nums, lines, charbeingremoved, filename, stroke_colors=stroke_colors,
                    stroke_widths=stroke_widths, line_height=line_height,
@@ -207,7 +213,7 @@ class Hand(object):
 
         view_height = line_height * (len(lines) + 1)
 
-        dwg = svgwrite.Drawing(filename=filename)
+        dwg = svgwrite.Drawing(filename=filename,debug=False)
         dwg.viewbox(width=view_width, height=view_height)
         dwg.add(dwg.rect(insert=(0, 0), size=(view_width, view_height), fill='white'))
 
