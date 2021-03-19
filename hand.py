@@ -240,6 +240,8 @@ class Hand(object):
                     chartoinser = removedchars[line_num][split_num-1]
                     size = 20
                     yoff = -initial_coord[1]
+                    if lastshift=0:
+                        lastshift = 50
                     g = dwg.g(style="font-size:{};font-family:Caveat;fill:{};".format(size,color,color))
                     t = dwg.text(chartoinser,x=[lastshift],y=[yoff+size],font_size=str(size)+'px',fill=color)
                     g.add(t)
