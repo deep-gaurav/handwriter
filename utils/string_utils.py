@@ -8,7 +8,7 @@ def accomodate_list_to_character_limit(lines):
             # print("Input Line greater than ", character_limit,
             #       " characters. Moving to a new line.")
             wheretocut = character_limit - 2
-            while line[wheretocut-1]!=' ' and wheretocut>1:
+            while (line[wheretocut-1]!=' ' or line[wheretocut]!=' ') and wheretocut>1:
                 wheretocut-=1
             if wheretocut <= 2:
                 wheretocut = character_limit-2
