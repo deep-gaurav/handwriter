@@ -85,7 +85,12 @@ class Hand(object):
                     line_splits.append(line[lastpos:charpos])
                     lastpos=charpos+1
                 elif lastpos==charpos and (charpos==len(line)-1 or ((line[charpos+1]) not in valid_char_set)):
-                    print "Removing ",char," bcz is last",charpos==len(line)-1,"or ",line[charpos+1]," not valid ",((line[charpos+1]) not in valid_char_set)
+
+                    print "Removing ",char," bcz "
+                    if charpos==len(line)-1:
+                        print "is last",charpos==len(line)-1
+                    else:
+                        print line[charpos+1]," not valid ", ((line[charpos+1]) not in valid_char_set)
                     removedchar.append(char)
                     line_splits.append(line[lastpos:charpos])
                     lastpos=charpos+1
