@@ -80,6 +80,10 @@ class Hand(object):
                         line[lastpos:charpos]
                     )
                     lastpos=originalpos+1
+                elif char==' ' and charpos<len(line)-1 and line[charpos+1]==' ':
+                    removedchar.append(char)
+                    line_splits.append(line[lastpos:charpos])
+                    lastpos=charpos+1
             line_splits.append(line[lastpos:])
             linestosample.extend(line_splits)
             line_nums.extend([i for x in line_splits])
