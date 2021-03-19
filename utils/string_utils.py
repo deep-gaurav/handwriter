@@ -2,13 +2,18 @@ def accomodate_list_to_character_limit(lines):
     global formatted_lines
     formatted_lines = []
 
-    def split_if_greater(line, character_limit=75):
+    def split_if_greater(line, character_limit=70):
         global formatted_lines
         if len(line) > character_limit:
             # print("Input Line greater than ", character_limit,
             #       " characters. Moving to a new line.")
-            line_2 = line[character_limit - 2:]  # Later longs part
-            line_1 = line[:character_limit - 2]  # First part
+            wheretocut = character_limit - 2
+            while line[wheretocut]!=' ' and wheretocut>0:
+                wheretocut-=1
+            if wheretocut <= 1:
+                wheretocut = character_limit-2
+            line_2 = line[wheretocut:]  # Later longs part
+            line_1 = line[:wheretocut]  # First part
             formatted_lines.append(line_1)
             split_if_greater(line_2)
         else:
