@@ -11,7 +11,7 @@ from rnn import rnn
 class Hand(object):
 
     def __init__(self):
-        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
         self.nn = rnn(
             log_dir='logs',
             checkpoint_dir='checkpoints',
@@ -29,7 +29,7 @@ class Hand(object):
             enable_parameter_averaging=False,
             min_steps_to_checkpoint=2000,
             log_interval=20,
-            logging_level=logging.CRITICAL,
+            logging_level=logging.DEBUG,
             grad_clip=10,
             lstm_size=400,
             output_mixture_components=20,
