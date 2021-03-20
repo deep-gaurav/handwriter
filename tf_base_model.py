@@ -7,7 +7,8 @@ import pprint as pp
 import time
 
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 from tf_utils import shape
 
@@ -396,8 +397,8 @@ class TFBaseModel(object):
             self.learning_rate_var = tf.Variable(0.0, trainable=False)
             self.beta1_decay_var = tf.Variable(0.0, trainable=False)
 
-            # self.loss = self.calculate_loss()
-            # self.update_parameters(self.loss)
+            self.loss = self.calculate_loss()
+            self.update_parameters(self.loss)
 
             self.saver = tf.train.Saver(max_to_keep=1)
             if self.enable_parameter_averaging:

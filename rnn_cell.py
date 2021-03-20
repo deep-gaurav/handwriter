@@ -1,7 +1,8 @@
 from collections import namedtuple
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
-import tensorflow as tf
-import tensorflow.contrib.distributions as tfd
+import tensorflow_probability as tfp
 import numpy as np
 
 from tf_utils import dense_layer, shape
@@ -137,7 +138,7 @@ class LSTMAttentionCell(tf.nn.rnn_cell.RNNCell):
         covar_matrix = tf.stack(covar_matrix, axis=2)
         covar_matrix = tf.reshape(covar_matrix, (self.batch_size, self.num_output_mixture_components, 2, 2))
 
-        mvn = tfd.MultivariateNormalFullCovariance(loc=mus, covariance_matrix=covar_matrix)
+        mvn = tfp.distributions.MultivariateNormalFullCovariance(loc=mus, covariance_matrix=covar_matrix)
         b = tfd.Bernoulli(probs=es)
         c = tfd.Categorical(probs=pis)
 
