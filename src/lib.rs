@@ -9,6 +9,7 @@ impl HandWritingGen {
     pub fn new() -> Result<HandWritingGen> {
         Self::ensure_dependencies()?;
         Self::ensure_handwriter()?;
+        pyo3::prepare_freethreaded_python();
         Ok(HandWritingGen {})
     }
 

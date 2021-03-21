@@ -16,4 +16,4 @@ anyhow = "1.0"
 
 [dependencies.pyo3]
 version = "0.13.2"
-features = ["auto-initialize"]
+default-features = false
