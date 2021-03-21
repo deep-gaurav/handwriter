@@ -319,7 +319,7 @@ class TFBaseModel(object):
         saver.save(self.session, model_path, global_step=step)
 
     def restore(self, step=None, averaged=False):
-        logging.info('checkpoints dir {}'.format(self.checkpoint_dirs))
+        logging.info('checkpoints dir {}'.format(self.checkpoint_dir))
         saver = self.saver_averaged if averaged else self.saver
         checkpoint_dir = self.checkpoint_dir_averaged if averaged else self.checkpoint_dir
         if not step:
