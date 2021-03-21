@@ -3,7 +3,6 @@ name = "handwriter"
 version = "0.1.0"
 authors = ["Deep Gaurav <deepgauravraj@gmail.com>"]
 edition = "2018"
-build = "build.rs"
 
 [lib]
 name = "handwriter"
