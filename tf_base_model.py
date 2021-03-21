@@ -326,6 +326,7 @@ class TFBaseModel(object):
             import os
             p = os.path.join(os.getcwd(),checkpoint_dir)
             model_path = tf.train.latest_checkpoint(p)
+            logging.info('checkpoint path {}'.format(p))
             logging.info('restoring model parameters from {}'.format(model_path))
             saver.restore(self.session, model_path)
         else:

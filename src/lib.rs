@@ -18,7 +18,7 @@ impl HandWritingGen {
             .arg("-m")
             .arg("pip")
             .arg("install")
-            .args(&["numpy", "tensorflow","tensorflow_probability", "sklearn", "svgwrite","matplotlib","pandas"])
+            .args(&["numpy", "tensorflow","tensorflow_probability", "sklearn", "svgwrite","matplotlib","pycairo","pandas"])
             .spawn()?;
         chid.wait()?;
         Ok(())
@@ -60,6 +60,7 @@ impl HandWritingGen {
                 .try_into()
                 .unwrap();
             let os = py.import("os")?;
+            println!("changing to dir {}",Self::libpath());
             os.call("chdir",(&Self::libpath(),),None)?;
             syspath.insert(0, &Self::libpath()).unwrap();
             let demo = py.import("demo")?;
