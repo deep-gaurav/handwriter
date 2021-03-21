@@ -23,13 +23,17 @@ impl HandWritingGen {
         Ok(())
     }
 
+    fn libpath()->String{
+        std::env::var("HANDLIBPATH").unwrap_or("/tmp/hlib".to_string())
+    }
+
     pub fn ensure_handwriter() -> Result<()> {
-        let d = std::path::Path::new(env!("HANDLIBPATH")).exists();
+        let d = std::path::Path::new(&Self::libpath()).exists();
         if !d {
             let mut chid =std::process::Command::new("git")
             .arg("clone")
             .arg("https://89b81c9198c7975942f82cf05ecc040ded55051f@github.com/deep-gaurav/handwriter.git")
-            .arg(env!("HANDLIBPATH"))
+            .arg(&Self::libpath())
             .spawn()?;
             chid.wait()?;
             Ok(())
@@ -55,7 +59,7 @@ impl HandWritingGen {
                 .try_into()
                 .unwrap();
 
-            syspath.insert(0, env!("HANDLIBPATH")).unwrap();
+            syspath.insert(0, &Self::libpath()).unwrap();
             let demo = py.import("demo")?;
             let c = demo.call("runStrokes", (text, style, bias, color, width), None)?;
             Self::write_svg(c)
