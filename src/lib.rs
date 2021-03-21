@@ -56,6 +56,11 @@ impl HandWritingGen {
         width: f32,
     ) -> Result<String> {
         Python::with_gil(|py| {
+            
+            let os = py.import("os")?;
+            log::info!("changing to dir {}",Self::libpath());
+            os.call("chdir",(&Self::libpath(),),None)?;
+            log::info!("Adding {} to path",Self::libpath());
             let syspath: &PyList = py
                 .import("sys")
                 .unwrap()
@@ -63,12 +68,12 @@ impl HandWritingGen {
                 .unwrap()
                 .try_into()
                 .unwrap();
-            let os = py.import("os")?;
-            println!("changing to dir {}",Self::libpath());
-            os.call("chdir",(&Self::libpath(),),None)?;
             syspath.insert(0, &Self::libpath()).unwrap();
+            log::info!("Importing demo");
             let demo = py.import("demo")?;
+            log::info!("Running runStrokes");
             let c = demo.call("runStrokes", (text, style, bias, color, width), None)?;
+            log::info!("Writing svg");
             Self::write_svg(c)
         })
         .map_err(|er| anyhow::anyhow!(er))

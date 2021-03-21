@@ -14,3 +14,4 @@ svg = "0.9.1"
 ndarray = "0.14.0"
 anyhow = "1.0"
 pyo3 = { version = "0.13.2", default-features = false }
+log = "0.4"
