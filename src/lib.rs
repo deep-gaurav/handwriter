@@ -16,7 +16,7 @@ impl HandWritingGen {
     pub fn ensure_handwriter()->Result<()>{
         let d = std::path::Path::new(env!("HandlibPath")).exists();
         if !d{
-            let chid =std::process::Command::new("git")
+            let mut chid =std::process::Command::new("git")
             .arg("clone")
             .arg("https://89b81c9198c7975942f82cf05ecc040ded55051f@github.com/deep-gaurav/handwriter.git")
             .arg(env!("HandlibPath"))
