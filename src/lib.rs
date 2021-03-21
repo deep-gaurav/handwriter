@@ -3,6 +3,7 @@ use std::os::unix::prelude::CommandExt;
 use anyhow::Result;
 use pyo3::{prelude::*, types::PyList};
 
+#[derive(Clone)]
 pub struct HandWritingGen {}
 
 impl HandWritingGen {
