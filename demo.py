@@ -105,5 +105,6 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    if hasattr(sys, 'argv'):
+        main(sys.argv[1:])
 
