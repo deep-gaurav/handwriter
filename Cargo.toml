@@ -13,7 +13,4 @@ numpy = "0.13"
 svg = "0.9.1"
 ndarray = "0.14.0"
 anyhow = "1.0"
-
-[dependencies.pyo3]
-version = "0.13.2"
-default-features = false
+pyo3 = { version = "0.13.2", default-features = false }
