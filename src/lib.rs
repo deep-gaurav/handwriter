@@ -58,7 +58,8 @@ impl HandWritingGen {
                 .unwrap()
                 .try_into()
                 .unwrap();
-
+            let os = py.import("os")?;
+            os.call("chdir",(&Self::libpath(),),None)?;
             syspath.insert(0, &Self::libpath()).unwrap();
             let demo = py.import("demo")?;
             let c = demo.call("runStrokes", (text, style, bias, color, width), None)?;
