@@ -5,3 +5,11 @@ data/processed
 
 logs
 predictions
+
+
+# Added by cargo
+
+/target
+
+/__pycache__
+/utils/__pycache__

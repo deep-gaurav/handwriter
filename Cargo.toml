@@ -1,0 +1,17 @@
+[package]
+name = "handwriter"
+version = "0.1.0"
+authors = ["Deep Gaurav <deepgauravraj@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+numpy = "0.13"
+svg = "0.9.1"
+ndarray = "0.14.0"
+anyhow = "1.0"
+
+[dependencies.pyo3]
+version = "0.13.2"
+features = ["auto-initialize"]

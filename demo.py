@@ -12,6 +12,61 @@ import sys, getopt
 from hand import Hand
 from utils.string_utils import accomodate_list_to_character_limit
 
+def runSVG(inputstring,style,bias,color,width,outputfile):
+    hand = Hand()
+    lines = inputstring.split("\n")
+    lines = accomodate_list_to_character_limit(lines)
+    biases = [bias for i in lines]
+    styles = [style for i in lines]
+    stroke_colors = [color for i in lines]
+    stroke_widths = [width for i in lines]
+
+    hand.write(
+        filename=outputfile,
+        lines=lines,
+        biases=biases,
+        styles=styles,
+        stroke_colors=stroke_colors,
+        stroke_widths=stroke_widths
+    )
+
+def runStrokes(inputstring,style,bias,color,width):
+    hand = Hand()
+    lines = inputstring.split("\n")
+    lines = accomodate_list_to_character_limit(lines)
+    biases = [bias for i in lines]
+    styles = [style for i in lines]
+    stroke_colors = [color for i in lines]
+    stroke_widths = [width for i in lines]
+
+    stt = hand.write_get_strokes(
+        lines=lines,
+        biases=biases,
+        styles=styles,
+        stroke_colors=stroke_colors,
+        stroke_widths=stroke_widths
+    )
+    params = {
+        'strokes': stt[0],
+        'strokes_text': stt[1],
+        'line_numbers': stt[2],
+        'lines':stt[3],
+        'removed_characters': stt[4],
+        'stroke_colors': stt[5],
+        'stroke_widths': stt[6],
+        'line_height':stt[7],
+        'view_width':stt[8],
+        'align_center':stt[9],
+        'biases':stt[10],
+        'styles':stt[11],
+    }
+    return hand.Gdraw(
+        params['strokes'],params['strokes_text'], params['line_numbers'], params['lines'], params['removed_characters'], stroke_colors=params['stroke_colors'],
+         stroke_widths=params['stroke_widths'],
+              line_height=params['line_height'], view_width=params['view_width'], align_center=params['align_center'],biases=params['biases'], styles=params['styles']
+    )
+
+
 def main(argv):
     print('starting')
     style = 0
@@ -43,24 +98,10 @@ def main(argv):
             width = int(arg)
     print('writing '+inputstring)
 
-    hand = Hand()
-    lines = inputstring.split("\n")
-    lines = accomodate_list_to_character_limit(lines)
-    biases = [bias for i in lines]
-    styles = [style for i in lines]
-    stroke_colors = [color for i in lines]
-    stroke_widths = [width for i in lines]
-
-    hand.write(
-        filename=outputfile,
-        lines=lines,
-        biases=biases,
-        styles=styles,
-        stroke_colors=stroke_colors,
-        stroke_widths=stroke_widths
-    )
+    runSVG(inputstring,style,bias,color,width,outputfile)
     
     print('writen to '+outputfile)
+
 
 
 if __name__ == '__main__':

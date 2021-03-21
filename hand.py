@@ -37,6 +37,7 @@ class Hand(object):
         )
         self.nn.restore()
 
+
     def write(self, filename, lines, biases=None, styles=None, stroke_colors=None,
               stroke_widths=None, line_height=60, view_width=1000, align_center=False):
         print("received lines",lines, "biases", biases, "styles",styles)
@@ -120,6 +121,92 @@ class Hand(object):
                    stroke_widths=stroke_widths, line_height=line_height,
                    view_width=view_width, align_center=align_center,biases=biases,styles=styles)
 
+
+    def write_get_strokes(self,  lines, biases=None, styles=None, stroke_colors=None,
+              stroke_widths=None, line_height=60, view_width=1000, align_center=False):
+        print("received lines",lines, "biases", biases, "styles",styles)
+        valid_char_set = set(drawing.alphabet_perf)
+        for line_num, line in enumerate(lines):
+            if len(line) > 75:
+                raise ValueError(
+                    (
+                        "Each line must be at most 75 characters. "
+                        "Line {} contains {}"
+                    ).format(line_num, len(line))
+                )
+
+            for char in line:
+                if char not in valid_char_set:
+                    print("Invalid character {} detected".format(char))
+                    # raise ValueError(
+                    #     (
+                    #         "Invalid character {} detected in line {}. "
+                    #         "Valid character set is {}"
+                    #     ).format(char, line_num, valid_char_set)
+                    # )
+        linestosample = []
+        line_nums = []
+        biasetosample = []
+        stylestosample = []
+        charbeingremoved = []
+        for i in range(len(lines)):
+            line_splits = []
+            lastpos = 0
+            line = lines[i]
+            removedchar = []
+            for charpos,char in enumerate(line):
+                if char not in valid_char_set:
+                    print("Removing ", char)
+                    originalpos = charpos
+                    while charpos>0 and line[charpos-1]==' ':
+                        charpos-=1
+                    removedchar.append(char)
+                    line_splits.append(
+                        line[lastpos:charpos]
+                    )
+                    lastpos=originalpos+1
+                elif char==' ' and charpos<len(line)-1 and line[charpos+1]==' ':
+                    removedchar.append(char)
+                    line_splits.append(line[lastpos:charpos])
+                    lastpos=charpos+1
+                elif lastpos==charpos and (charpos==len(line)-1 or ((line[charpos+1]) not in valid_char_set)):
+
+                    print("Removing ",char," bcz ")
+                    if charpos==len(line)-1:
+                        print("is last",charpos==len(line)-1)
+                    else:
+                        print(line[charpos+1]," not valid ", ((line[charpos+1]) not in valid_char_set))
+                    removedchar.append(char)
+                    line_splits.append(line[lastpos:charpos])
+                    lastpos=charpos+1
+            # if lastpos<len(line):
+            line_splits.append(line[lastpos:])
+            linestosample.extend(line_splits)
+            line_nums.extend([i for x in line_splits])
+            biasetosample.extend( [biases[i] for x in line_splits])
+            stylestosample.extend([styles[i] for x in line_splits])
+            charbeingremoved.append(removedchar)
+        print("Sampling for")
+        for i in range(len(linestosample)):
+            linestosample[i] = linestosample[i]
+            if not linestosample[i]:
+                linestosample[i]= ''
+            print(linestosample[i])
+                        
+        print("Sending samples", linestosample, "Biases", biasetosample, "styles", stylestosample)
+        strokes = []
+        for line,bias,style in zip(linestosample,biasetosample,stylestosample):
+            if line:
+                strokes.extend(self._sample([line], biases=[bias], styles=[style]))
+            else:
+                strokes.extend([[0,0,0]])
+        print("Strokes generated", strokes)
+        # import numpy
+        # strokes = numpy.stack(strokes,axis=0)
+        return (strokes,linestosample, line_nums, lines, charbeingremoved,  stroke_colors,
+                   stroke_widths, line_height,
+                   view_width, align_center,biases,styles)
+       
     def _sample(self, lines, biases=None, styles=None):
         print("Sampling lines")
         print(lines)
@@ -337,6 +424,132 @@ class Hand(object):
 
         # dwg.save()
 
+
+    def Gdraw(self, strokesmain,sampledsegments, line_nums, lines, removedchars, stroke_colors=None, stroke_widths=None,
+              line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
+        print("Strokes ")
+        for i in range(len(strokesmain)):
+            print("Stroke ",i+1)
+            print(strokesmain[i])
+        
+        print("Line nums")
+        print(line_nums)
+        print("Removed chars")
+        print(removedchars)
+        stroke_colors = stroke_colors or ['black'] * len(lines)
+        stroke_widths = stroke_widths or [2] * len(lines)
+
+        view_height = line_height * (len(lines) + 1)
+
+        outs = {
+            
+        }
+        outs['width']=view_width
+        outs['height']=view_height
+        outs['svgpaths']=[]
+
+        initial_coord = np.array([0, -(3 * line_height / 4)])
+
+        i=0
+        while i<len(line_nums):
+            line_num = line_nums[i]
+            line_splits = []
+            sseg = []
+            while True:
+                if i<len(line_nums) and line_num == line_nums[i]:
+                    sseg.append(sampledsegments[i])
+                    line_splits.append(strokesmain[i])
+                    i+=1
+                else:
+                    break
+            line = lines[line_num]
+            color= stroke_colors[line_num]
+            width =stroke_widths[line_num]
+            if not line:
+                initial_coord[1] -= line_height
+                continue
+            lastshift = 0
+
+            for split_num,split_val in enumerate(line_splits):
+                segment=sseg[split_num]
+                print("Drawing line ",line_num, "split ", split_num, "Segment", segment)
+                if split_num>0:
+                    chartoinser = removedchars[line_num][split_num-1]
+                    size = 20
+                    yoff = -initial_coord[1]
+                    if lastshift==0:
+                        lastshift = 50
+                    w = textwidth(chartoinser,fontsize=size)
+                    lastshift+=w
+                    outs['svgpaths'].append({
+                        'type':'text',
+                        'font-family':'Caveat',
+                        'font-size':size,
+                        'font-color':color,
+                        'fill':color,
+                        'text':chartoinser,
+                        'x':lastshift,
+                        'y':yoff+size
+                    })
+                if not segment:
+                    print("Skipping segment")
+                    continue
+                offsets = split_val
+
+                # print("Offsets")
+                # print(offsets)
+                offsets[:, :2] *= 1.5
+                strokes = drawing.offsets_to_coords(offsets)
+                # print("Coords")
+                # print(strokes)
+                strokes = drawing.denoise(strokes)
+                strokes[:, :2] = drawing.align(strokes[:, :2])
+
+                strokes[:, 1] *= -1
+                strokes[:, :2] -= strokes[:, :2].min() + initial_coord
+
+                if align_center:
+                    strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
+                
+                # print("segment starts at ",zip(*strokes.T)[0][0])
+                if split_num>0:
+                    strokes[:,0]-=zip(*strokes.T)[0][0]
+                strokes[:,0]+=lastshift
+                
+
+                prev_eos = 1.0
+                pathpos = []
+                pathpos.append(
+                    {
+                        'type':'move',
+                        'x':0,
+                        'y':0
+                    }
+                )
+                print("starting this segment at ",lastshift)
+                for x, y, eos in zip(*strokes.T):
+                    pathpos.append(
+                        {
+                            'type':'move' if prev_eos==1.0 else 'line',
+                            'x':x,
+                            'y':y
+                        }
+                    )
+                    prev_eos = eos
+                    if x> lastshift:
+                        lastshift = x
+                    # print("Made last shift ",x)
+                outs['svgpaths'].append({
+                        'type':'path',
+                        'color':color,
+                        'width':width,
+                        'linecap':'round',
+                        'fill':'none',
+                        'positions':pathpos
+                    })
+
+            initial_coord[1] -= line_height
+        return outs
 def textwidth(text, fontsize=14):
     import cairo
     surface = cairo.SVGSurface('undefined.svg', 1280, 200)
