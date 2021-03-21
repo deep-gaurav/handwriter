@@ -2,7 +2,7 @@ import sys
 if not hasattr(sys,'argv'):
     import logging
     logging.info("set argv")
-    sys.argv = []
+    sys.argv = ['demo.py']
 import os
 import logging
 
