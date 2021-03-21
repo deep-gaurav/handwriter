@@ -6,9 +6,13 @@ use pyo3::{prelude::*, types::PyList};
 pub struct HandWritingGen {}
 
 impl HandWritingGen {
-    pub fn new() -> Result<HandWritingGen> {
-        Self::ensure_dependencies()?;
-        Self::ensure_handwriter()?;
+    pub fn new(ensure_dep:bool,ensure_lib:bool) -> Result<HandWritingGen> {
+        if ensure_dep{
+            Self::ensure_dependencies()?;
+        }
+        if ensure_lib {
+            Self::ensure_handwriter()?;
+        }
         pyo3::prepare_freethreaded_python();
         Ok(HandWritingGen {})
     }
