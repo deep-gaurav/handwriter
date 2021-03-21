@@ -1,3 +1,8 @@
+import sys
+if not hasattr(sys,'argv'):
+    import logging
+    logging.info("set argv")
+    sys.argv = []
 import os
 import logging
 
