@@ -9,15 +9,12 @@ import logging
 import numpy as np
 import svgwrite
 
-import drawing
-import lyrics
-from rnn import rnn
-
 import sys, getopt
-from hand import Hand
 from utils.string_utils import accomodate_list_to_character_limit
 
 def runSVG(inputstring,style,bias,color,width,outputfile):
+    from hand import Hand
+
     hand = Hand()
     lines = inputstring.split("\n")
     lines = accomodate_list_to_character_limit(lines)
@@ -35,7 +32,8 @@ def runSVG(inputstring,style,bias,color,width,outputfile):
         stroke_widths=stroke_widths
     )
 
-def runStrokes(inputstring,style,bias,color,width):
+def runStrokes(inputstring,style,bias,color,width,returndict=None):
+    from hand import Hand
     hand = Hand()
     lines = inputstring.split("\n")
     lines = accomodate_list_to_character_limit(lines)
@@ -65,12 +63,23 @@ def runStrokes(inputstring,style,bias,color,width):
         'biases':stt[10],
         'styles':stt[11],
     }
-    return hand.Gdraw(
+    retv= hand.Gdraw(
         params['strokes'],params['strokes_text'], params['line_numbers'], params['lines'], params['removed_characters'], stroke_colors=params['stroke_colors'],
          stroke_widths=params['stroke_widths'],
               line_height=params['line_height'], view_width=params['view_width'], align_center=params['align_center'],biases=params['biases'], styles=params['styles']
     )
+    if returndict!=None:
+        returndict['return']=retv
+    return retv
 
+def runStrokesIsolated(inputstring,style,bias,color,width):
+    import multiprocessing
+    manager = multiprocessing.Manager()
+    returndict = manager.dict()
+    p = multiprocessing.Process(target=runStrokes,args=(inputstring,style,bias,color,width,returndict))
+    p.start()
+    p.join()
+    return returndict['return']
 
 def main(argv):
     print('starting')
