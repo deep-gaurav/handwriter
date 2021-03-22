@@ -474,7 +474,7 @@ class Hand(object):
                 initial_coord[1] -= line_height
                 continue
             lastshift = 0
-
+            isfirststroke=False
             for split_num,split_val in enumerate(line_splits):
                 segment=sseg[split_num]
                 print("Drawing line ",line_num, "split ", split_num, "Segment", segment)
@@ -517,10 +517,12 @@ class Hand(object):
                     strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
                 
                 # print("segment starts at ",zip(*strokes.T)[0][0])
-                if split_num>0:
+                if not isfirststroke:
+                    print("is not first zipp")
                     strokes[:,0]-=zip(*strokes.T)[0][0]
-                strokes[:,0]+=lastshift
-                
+                else:
+                    print("is first next will zip")
+                    isfirststroke=False
 
                 prev_eos = 1.0
                 pathpos = []
