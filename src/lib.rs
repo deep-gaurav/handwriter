@@ -1,3 +1,4 @@
+use core::f32;
 use std::os::unix::prelude::CommandExt;
 
 use anyhow::Result;
@@ -171,11 +172,11 @@ impl HandWritingGen {
 
     pub fn write_svg_fromstroke(params:Vec<Stroke>,width: f32,line_height:f32) ->Result<String,anyhow::Error> {
         let height = {
-            params.len() as f32*(3. * line_height / 4.)
+            (params.len()+1) as f32 *(line_height as f32)
         };
         let mut document = svg::Document::new().set("viewBox", (0, 0, width, height));
 
-        for line in params.iter(){
+        for (line_num,line) in params.iter().enumerate(){
             for stroke in line.strokes.iter(){
                 match stroke {
                     StrokeType::Path(path) => {
@@ -187,11 +188,12 @@ impl HandWritingGen {
                         for pos in path.paths.iter(){
                             match pos{
                                 PathType::Move(x, y) => {
-                                    data = data.move_to((*x,*y));
+                                    let y = y+ (line_num as f32)*(3. * line_height / 4.);
+                                    data = data.move_to((*x,y));
                                 }
                                 PathType::Line(x, y) => {
-
-                                    data = data.line_to((*x,*y));
+                                    let y = y+ (line_num as f32)*(3. * line_height / 4.);
+                                    data = data.line_to((*x,y));
                                 }
                             }
                         }
