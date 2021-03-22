@@ -1,5 +1,5 @@
 
-use handwriter::HandWritingGen;
+use handwriter::pystruct::HandWritingGen;
 
 fn main() -> Result<(),anyhow::Error> {
     let h = crate::HandWritingGen::new(true,true)?;
