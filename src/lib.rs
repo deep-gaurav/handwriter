@@ -2,6 +2,47 @@ use std::os::unix::prelude::CommandExt;
 
 use anyhow::Result;
 use pyo3::{prelude::*, types::PyList};
+use serde::{Serialize,Deserialize};
+use svg::node::{Text, element::path::Data};
+
+
+#[derive(Debug,Serialize,Deserialize,Clone,PartialEq)]
+pub struct Stroke{
+    pub strokes:Vec<StrokeType>
+}
+
+#[derive(Debug,Clone,Serialize,Deserialize,PartialEq)]
+pub enum StrokeType{
+    Path(StrokePath),
+    Text(StrokeText),
+}
+
+#[derive(Debug,Clone,Serialize,Deserialize,PartialEq)]
+pub struct StrokePath{
+    paths:Vec<PathType>,
+    fill:String,
+    stroke_color:String,
+    line_cap:String,
+    stroke_width:f32,
+}
+
+#[derive(Debug,Clone,Serialize,Deserialize,PartialEq)]
+pub struct StrokeText{
+    x:f32,
+    y:f32,
+    content:String,
+    fill:String,
+    font_color:String,
+    font_size:u32,
+    font_family:String
+}
+
+#[derive(Debug,Clone,Serialize,Deserialize,PartialEq)]
+pub enum PathType {
+    Move(f32,f32),
+    Line(f32,f32),
+}
+
 
 #[derive(Clone)]
 pub struct HandWritingGen {}
@@ -48,14 +89,14 @@ impl HandWritingGen {
         }
     }
 
-    pub fn gen_svg(
+    pub fn gen_svg_and_stroke(
         &self,
         text: &str,
         style: u32,
         bias: f32,
         color: &str,
         width: f32,
-    ) -> Result<String> {
+    ) -> Result<(String,Stroke)> {
         Python::with_gil(|py| {
             
             let os = py.import("os")?;
@@ -75,9 +116,114 @@ impl HandWritingGen {
             log::info!("Running runStrokes");
             let c = demo.call("runStrokes", (text, style, bias, color, width), None)?;
             log::info!("Writing svg");
-            Self::write_svg(c)
+            let svg = Self::write_svg(c)?;
+            let stroke = Self::get_stroke(c)?;
+            Ok((svg,stroke))
         })
-        .map_err(|er| anyhow::anyhow!(er))
+    }
+
+    pub fn get_stroke(params: &PyAny) -> PyResult<Stroke> {
+        let svg_paths: Vec<&PyAny> = params.get_item("svgpaths")?.extract()?;
+            let mut strokes = vec![];
+            for p in svg_paths.iter() {
+                let ptype: String = p.get_item("type")?.extract()?;
+                if ptype == "path" {
+                    let mut path_segs = vec![];
+                    let positions: Vec<&PyAny> = p.get_item("positions")?.extract()?;
+                    for pos in positions.iter() {
+                        let x: f32 = pos.get_item("x")?.extract()?;
+                        let y: f32 = pos.get_item("y")?.extract()?;
+                        if pos.get_item("type")?.extract::<&str>()? == "move" {
+                            path_segs.push(PathType::Move(x,y));
+                        } else {
+                            path_segs.push(PathType::Line(x,y))
+                        }
+                    }
+                    let color: &str = p.get_item("color")?.extract()?;
+                    let width: f32 = p.get_item("width")?.extract()?;
+                    let line_cap: &str = p.get_item("linecap")?.extract()?;
+                    let fill: &str = p.get_item("fill")?.extract()?;
+                    strokes.push(StrokeType::Path(StrokePath{
+                        paths: path_segs,
+                        fill: fill.to_string(),
+                        stroke_color: color.to_string(),
+                        line_cap: line_cap.to_string(),
+                        stroke_width: width,
+
+                    }));
+                } else if ptype == "text" {
+                    let content: &str = p.get_item("text")?.extract()?;
+                    let fill: &str = p.get_item("fill")?.extract()?;
+                    let x: f32 = p.get_item("x")?.extract()?;
+                    let y: f32 = p.get_item("y")?.extract()?;
+                    let font_color: &str = p.get_item("font-color")?.extract()?;
+                    let font_size = p.get_item("font-size")?.extract()?;
+                    let font_family: &str = p.get_item("font-family")?.extract()?;
+                    strokes.push(StrokeType::Text(StrokeText{ x, y, content: content.to_string(), fill:fill.to_string(), font_color: font_color.to_string(), font_size, font_family: font_family.to_string()}));
+                }
+            }
+            Ok(
+                Stroke{
+                    strokes
+                }
+            )
+    }
+
+    pub fn write_svg_fromstroke(params:Vec<Stroke>,width: f32,line_height:f32) ->Result<String,anyhow::Error> {
+        let height = {
+            params.len() as f32*(3. * line_height / 4.)
+        };
+        let mut document = svg::Document::new().set("viewBox", (0, 0, width, height));
+
+        for line in params.iter(){
+            for stroke in line.strokes.iter(){
+                match stroke {
+                    StrokeType::Path(path) => {
+                        use svg::node::element::path::Data;
+                        use svg::node::element::Path;
+                        use svg::node::Text;
+            
+                        let mut data = Data::new();
+                        for pos in path.paths.iter(){
+                            match pos{
+                                PathType::Move(x, y) => {
+                                    data = data.move_to((*x,*y));
+                                }
+                                PathType::Line(x, y) => {
+
+                                    data = data.line_to((*x,*y));
+                                }
+                            }
+                        }
+                        data = data.close();
+                        let path = Path::new()
+                        .set("d", data)
+                        .set("fill", path.fill.to_string())
+                        .set("stroke", path.stroke_color.to_string())
+                        .set("linecap", path.line_cap.to_string())
+                        .set("stroke-width", path.stroke_width);
+                        document = document.add(path);
+                    }
+                    StrokeType::Text(text) => {
+                        let text = svg::node::element::Text::new()
+                            .set("fill", text.fill.to_string())
+                            .set("x", text.x)
+                            .set("y", text.y)
+                            .set("font-color", text.font_color.to_string())
+                            .set("font-size", text.font_size.to_string())
+                            .set("font-family", text.font_family.to_string())
+                            .add(Text::new(text.content.to_string()));
+                        document = document.add(text);
+                    }
+                }
+            }
+        }
+
+        let mut buff = vec![];
+        svg::write(&mut buff, &document)?;
+        let svgstring = std::str::from_utf8(&buff)?;
+        println!("{}", svgstring);
+        Ok(svgstring.to_string())
     }
 
     pub fn write_svg(params: &PyAny) -> PyResult<String> {
@@ -115,7 +261,6 @@ impl HandWritingGen {
                     .set("d", data)
                     .set("fill", fill)
                     .set("stroke", color)
-                    .set("fill", fill)
                     .set("linecap", line_cap)
                     .set("stroke-width", width);
                 document = document.add(path);
