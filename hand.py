@@ -336,7 +336,6 @@ class Hand(object):
                 continue
             lastshift = 0
 
-            isfirststroke = True
             for split_num,split_val in enumerate(line_splits):
                 segment=sseg[split_num]
                 print("Drawing line ",line_num, "split ", split_num, "Segment", segment)
@@ -345,7 +344,7 @@ class Hand(object):
                     size = 20
                     yoff = -initial_coord[1]
                     if lastshift==0:
-                        lastshift = 50
+                        lastshift = 20
                     g = dwg.g(style="font-size:{};font-family:Caveat;fill:{};".format(size,color,color))
                     t = dwg.text(chartoinser,x=[lastshift],y=[yoff+size],font_size=str(size)+'px',fill=color)
                     g.add(t)
@@ -373,12 +372,9 @@ class Hand(object):
                     strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
                 
                 # print("segment starts at ",zip(*strokes.T)[0][0])
-                if not isfirststroke:
-                    print("is not first zipp")
-                    strokes[:,0]-=zip(*strokes.T)[0][0]
-                else:
-                    print("is first next will zip")
-                    isfirststroke=False
+                if split_num>0:
+                    print("is not first zipp stroke {}".format(strokes))
+                    strokes[:,0]-=list(zip(*strokes.T))[0][0]
                 strokes[:,0]+=lastshift
                 
 
@@ -397,38 +393,6 @@ class Hand(object):
 
             initial_coord[1] -= line_height
         dwg.save()
-        # for lc, offsets, line, color, width in zip(range(len(lines)),strokes, lines, stroke_colors, stroke_widths):
-
-        #     if not line:
-        #         initial_coord[1] -= line_height
-        #         continue
-
-        #     offsets[:, :2] *= 1.5
-        #     strokes = drawing.offsets_to_coords(offsets)
-        #     strokes = drawing.denoise(strokes)
-        #     strokes[:, :2] = drawing.align(strokes[:, :2])
-
-        #     strokes[:, 1] *= -1
-        #     strokes[:, :2] -= strokes[:, :2].min() + initial_coord
-
-        #     if align_center:
-        #         strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
-
-        #     prev_eos = 1.0
-        #     p = "M{},{} ".format(0, 0)
-        #     for x, y, eos in zip(*strokes.T):
-        #         p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
-        #         prev_eos = eos
-        #     path = svgwrite.path.Path(p)
-        #     path = path.stroke(color=color, width=width, linecap='round').fill("none")
-        #     dwg.add(path)
-
-        #     self._fix_unknownchar(line,bias=biases[lc],style=styles[lc],yoff=-initial_coord[1],color=color,dwg=dwg,size=20)
-
-        #     initial_coord[1] -= line_height
-
-        # dwg.save()
-
 
     def Gdraw(self, strokesmain,sampledsegments, line_nums, lines, removedchars, stroke_colors=None, stroke_widths=None,
               line_height=60, view_width=1000, align_center=True,biases=None, styles=None):
@@ -474,7 +438,6 @@ class Hand(object):
                 initial_coord[1] -= line_height
                 continue
             lastshift = 0
-            isfirststroke=False
             for split_num,split_val in enumerate(line_splits):
                 segment=sseg[split_num]
                 print("Drawing line ",line_num, "split ", split_num, "Segment", segment)
@@ -483,9 +446,8 @@ class Hand(object):
                     size = 20
                     yoff = -initial_coord[1]
                     if lastshift==0:
-                        lastshift = 50
+                        lastshift = 20
                     w = textwidth(chartoinser,fontsize=size)
-                    lastshift+=w
                     outs['svgpaths'].append({
                         'type':'text',
                         'font-family':'Caveat',
@@ -496,6 +458,8 @@ class Hand(object):
                         'x':lastshift,
                         'y':yoff+size
                     })
+                    lastshift+=w
+
                 if not segment:
                     print("Skipping segment")
                     continue
@@ -517,12 +481,10 @@ class Hand(object):
                     strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
                 
                 # print("segment starts at ",zip(*strokes.T)[0][0])
-                if not isfirststroke:
-                    print("is not first zipp")
-                    strokes[:,0]-=zip(*strokes.T)[0][0]
-                else:
-                    print("is first next will zip")
-                    isfirststroke=False
+                if split_num>0:
+                    print("is not first zipp stroke {}".format(strokes))
+                    strokes[:,0]-=list(zip(*strokes.T))[0][0]
+                strokes[:,0]+=lastshift
 
                 prev_eos = 1.0
                 pathpos = []
@@ -564,4 +526,4 @@ def textwidth(text, fontsize=14):
     cr.select_font_face('Arial', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
     cr.set_font_size(fontsize)
     xbearing, ybearing, width, height, xadvance, yadvance = cr.text_extents(text)
-    return width
+    return width*1.25

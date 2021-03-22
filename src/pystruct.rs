@@ -100,6 +100,7 @@ impl HandWritingGen {
             let c = demo.call("runStrokesIsolated", (text, style, bias, color, width), None)?;
             log::info!("Writing svg");
             let svg = Self::write_svg(c)?;
+            log::info!("Svg generated getting strokes");
             let stroke = Self::get_stroke(c)?;
             drop(pool);
             Ok((svg, stroke))
@@ -263,7 +264,7 @@ impl HandWritingGen {
                 let x: f32 = p.get_item("x")?.extract()?;
                 let y: f32 = p.get_item("y")?.extract()?;
                 let font_color: &str = p.get_item("font-color")?.extract()?;
-                let font_size: &str = p.get_item("font-size")?.extract()?;
+                let font_size: u32 = p.get_item("font-size")?.extract()?;
                 let font_family: &str = p.get_item("font-family")?.extract()?;
                 let text = svg::node::element::Text::new()
                     .set("fill", fill)
