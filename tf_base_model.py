@@ -231,6 +231,11 @@ class TFBaseModel(object):
 
                     logging.info(metric_log)
 
+
+                    if step % self.min_steps_to_checkpoint:
+                        self.save(step)
+                        if self.enable_parameter_averaging:
+                            self.save(step, averaged=True)
                     if early_stopping_metric < best_validation_loss:
                         best_validation_loss = early_stopping_metric
                         best_validation_tstep = step
@@ -317,6 +322,8 @@ class TFBaseModel(object):
         model_path = os.path.join(checkpoint_dir, 'model')
         logging.info('saving model to {}'.format(model_path))
         saver.save(self.session, model_path, global_step=step)
+        import subprocess
+        subprocess.run(["cp", "/content/handwriter/"+checkpoint_dir+"/*","/content/drive/MyDrive/handwritingfiles/all_data/checkpoints/"])
 
     def restore(self, step=None, averaged=False):
         logging.info('checkpoints dir {}'.format(self.checkpoint_dir))
