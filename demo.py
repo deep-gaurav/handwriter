@@ -14,7 +14,7 @@ from utils.string_utils import accomodate_list_to_character_limit
 from hand import Hand
 hand = Hand()
 
-def runSVG(inputstring,style,bias,color,width,outputfile):
+def runSVG(hand,inputstring,style,bias,color,width,outputfile):
     
     lines = inputstring.split("\n")
     lines = accomodate_list_to_character_limit(lines)
@@ -32,7 +32,7 @@ def runSVG(inputstring,style,bias,color,width,outputfile):
         stroke_widths=stroke_widths
     )
 
-def runStrokes(inputstring,style,bias,color,width,returndict=None):
+def runStrokes(hand,inputstring,style,bias,color,width,returndict=None):
     
     lines = inputstring.split("\n")
     lines = accomodate_list_to_character_limit(lines)
@@ -75,7 +75,7 @@ def runStrokesIsolated(inputstring,style,bias,color,width):
     import multiprocessing
     manager = multiprocessing.Manager()
     returndict = manager.dict()
-    p = multiprocessing.Process(target=runStrokes,args=(inputstring,style,bias,color,width,returndict))
+    p = multiprocessing.Process(target=runStrokes,args=(hand,inputstring,style,bias,color,width,returndict))
     p.start()
     p.join()
     return returndict['return']
@@ -111,7 +111,7 @@ def main(argv):
             width = int(arg)
     print('writing '+inputstring)
 
-    runSVG(inputstring,style,bias,color,width,outputfile)
+    runSVG(hand,inputstring,style,bias,color,width,outputfile)
     
     print('writen to '+outputfile)
 
