@@ -161,21 +161,26 @@ impl HandWritingGen {
     }
 
     pub fn write_svg_fromstroke(
-        params: Vec<Stroke>,
+        mut params: Vec<Stroke>,
         width: f32,
         line_height: f32,
     ) -> Result<String, anyhow::Error> {
         let height = { (params.len() + 1) as f32 * (3. * line_height / 4.) };
         let mut document = svg::Document::new().set("viewBox", (0, 0, width, height));
 
-        for (line_num, line) in params.iter().enumerate() {
-            for stroke in line.strokes.iter() {
+        for (line_num, line) in params.iter_mut().enumerate() {
+            for stroke in line.strokes.iter_mut() {
                 match stroke {
                     StrokeType::Path(path) => {
                         use svg::node::element::path::Data;
                         use svg::node::element::Path;
                         use svg::node::Text;
-
+                        let p = path.paths.iter_mut().rfind(|t|t.is_line());
+                        if let Some(p) = p{
+                            if let PathType::Line(x,y) = p{
+                                *p = PathType::Move(*x,*y)
+                            }
+                        }
                         let mut data = Data::new();
                         for pos in path.paths.iter() {
                             match pos {
@@ -189,7 +194,7 @@ impl HandWritingGen {
                                 }
                             }
                         }
-                        data = data.close();
+                        // log::info!("Not closing");
                         let path = Path::new()
                             .set("d", data)
                             .set("fill", path.fill.to_string())
@@ -246,7 +251,6 @@ impl HandWritingGen {
                         data = data.line_to((x, y));
                     }
                 }
-                data = data.close();
                 let color: &str = p.get_item("color")?.extract()?;
                 let width: f32 = p.get_item("width")?.extract()?;
                 let line_cap: &str = p.get_item("linecap")?.extract()?;
@@ -266,6 +270,7 @@ impl HandWritingGen {
                 let font_color: &str = p.get_item("font-color")?.extract()?;
                 let font_size: u32 = p.get_item("font-size")?.extract()?;
                 let font_family: &str = p.get_item("font-family")?.extract()?;
+                log::info!("{:#?} writing",content);
                 let text = svg::node::element::Text::new()
                     .set("fill", fill)
                     .set("x", x)

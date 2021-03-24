@@ -238,7 +238,9 @@ class Hand(object):
                 encoded = drawing.encode_ascii(lines[i])
                 chars[i, :len(encoded)] = encoded
                 chars_len[i] = len(encoded)
-
+        import time
+        tsme = time.time() 
+        print('session run')
         [samples] = self.nn.session.run(
             [self.nn.sampled_sequence],
             feed_dict={
@@ -252,6 +254,7 @@ class Hand(object):
                 self.nn.bias: biases
             }
         )
+        print("session end time {}".format(time.time()-tsme))
         samples = [sample[~np.all(sample == 0.0, axis=1)] for sample in samples]
         return samples
 
@@ -340,6 +343,7 @@ class Hand(object):
                 segment=sseg[split_num]
                 print("Drawing line ",line_num, "split ", split_num, "Segment", segment)
                 if split_num>0:
+                    print('adding to text')
                     chartoinser = removedchars[line_num][split_num-1]
                     size = 20
                     yoff = -initial_coord[1]
@@ -442,6 +446,7 @@ class Hand(object):
                 segment=sseg[split_num]
                 print("Drawing line ",line_num, "split ", split_num, "Segment", segment)
                 if split_num>0:
+                    print('adding to text ')
                     chartoinser = removedchars[line_num][split_num-1]
                     size = 20
                     yoff = -initial_coord[1]
@@ -458,6 +463,7 @@ class Hand(object):
                         'x':lastshift,
                         'y':yoff+size
                     })
+                    print('"{}" text added  shifting width {}px'.format(chartoinser,w))
                     lastshift+=w
 
                 if not segment:
@@ -484,14 +490,14 @@ class Hand(object):
                 if split_num>0:
                     print("is not first zipp stroke {}".format(strokes))
                     strokes[:,0]-=list(zip(*strokes.T))[0][0]
-                strokes[:,0]+=lastshift
+                strokes[:,0]+=(lastshift-strokes[:,0].min())
 
                 prev_eos = 1.0
                 pathpos = []
                 pathpos.append(
                     {
                         'type':'move',
-                        'x':0,
+                        'x':lastshift,
                         'y':0
                     }
                 )
@@ -523,7 +529,7 @@ def textwidth(text, fontsize=14):
     import cairo
     surface = cairo.SVGSurface('undefined.svg', 1280, 200)
     cr = cairo.Context(surface)
-    cr.select_font_face('Arial', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    cr.select_font_face('Caveat', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
     cr.set_font_size(fontsize)
     xbearing, ybearing, width, height, xadvance, yadvance = cr.text_extents(text)
-    return width*1.25
+    return xadvance+5.5

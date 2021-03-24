@@ -36,3 +36,15 @@ pub enum PathType {
     Move(f32,f32),
     Line(f32,f32),
 }
+
+impl PathType {
+    /// Returns `true` if the path_type is [`Line`].
+    pub fn is_line(&self) -> bool {
+        matches!(self, Self::Line(..))
+    }
+
+    /// Returns `true` if the path_type is [`Move`].
+    pub fn is_move(&self) -> bool {
+        matches!(self, Self::Move(..))
+    }
+}

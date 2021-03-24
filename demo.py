@@ -75,9 +75,10 @@ def runStrokesIsolated(inputstring,style,bias,color,width):
     import multiprocessing
     manager = multiprocessing.Manager()
     returndict = manager.dict()
-    p = multiprocessing.Process(target=runStrokes,args=(hand,inputstring,style,bias,color,width,returndict))
-    p.start()
-    p.join()
+    runStrokes(hand,inputstring,style,bias,color,width,returndict)
+    # p = multiprocessing.Process(target=runStrokes,args=(hand,inputstring,style,bias,color,width,returndict))
+    # p.start()
+    # p.join()
     return returndict['return']
 
 def main(argv):
