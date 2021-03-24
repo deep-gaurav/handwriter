@@ -202,7 +202,7 @@ impl HandWritingGen {
                         let text = svg::node::element::Text::new()
                             .set("fill", text.fill.to_string())
                             .set("x", text.x)
-                            .set("y", text.y)
+                            .set("y", text.y + (line_num as f32) * (3. * line_height / 4.))
                             .set("font-color", text.font_color.to_string())
                             .set("font-size", text.font_size.to_string())
                             .set("font-family", text.font_family.to_string())
