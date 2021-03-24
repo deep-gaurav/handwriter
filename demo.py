@@ -11,11 +11,11 @@ import svgwrite
 
 import sys, getopt
 from utils.string_utils import accomodate_list_to_character_limit
+from hand import Hand
+hand = Hand()
 
 def runSVG(inputstring,style,bias,color,width,outputfile):
-    from hand import Hand
-
-    hand = Hand()
+    
     lines = inputstring.split("\n")
     lines = accomodate_list_to_character_limit(lines)
     biases = [bias for i in lines]
@@ -33,8 +33,7 @@ def runSVG(inputstring,style,bias,color,width,outputfile):
     )
 
 def runStrokes(inputstring,style,bias,color,width,returndict=None):
-    from hand import Hand
-    hand = Hand()
+    
     lines = inputstring.split("\n")
     lines = accomodate_list_to_character_limit(lines)
     biases = [bias for i in lines]
